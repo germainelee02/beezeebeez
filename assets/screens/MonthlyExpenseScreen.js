@@ -141,7 +141,7 @@ const MonthlyExpenseScreen = ({ navigation }) => {
                 </Text>
               ) : (
                 <Text style={styles.balanceText}>
-                  Current Balance: -${-Number(balance).toFixed(2).toString()}
+                  Current Balance: -${Number(-balance).toFixed(2).toString()}
                 </Text>
               )}
 
