@@ -24,9 +24,9 @@ const ImportantTask = ({
       <View style={styles.buttons}>
         <TouchableOpacity onPress={() => toggleImportantTask(index)}>
           {complete ? (
-            <Ionicons name="checkmark-done" size={20} />
+            <Ionicons name="checkmark-done" size={23} />
           ) : (
-            <Ionicons name="checkmark" size={20} />
+            <Ionicons name="checkmark" size={23} />
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => unpinTask(index)}>

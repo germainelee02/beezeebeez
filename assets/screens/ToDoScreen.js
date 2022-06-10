@@ -16,7 +16,6 @@ import {
 } from "react-native";
 import Task from "../components/TaskComponents.js/Task";
 import ImportantTask from "../components/TaskComponents.js/ImportantTask";
-import { FontAwesome } from "@expo/vector-icons";
 import { db, authentication } from "../../firebase/firebase-config";
 import {
   collection,
@@ -201,9 +200,15 @@ const ToDoListScreen = () => {
           <View style={styles.taskWrapper}>
             <Text style={styles.sectionTitle}>Today's Tasks</Text>
             <View style={{ marginTop: 10, marginBottom: 0 }}>
-              <Text> Total: {pendingNumber + completedNumber}</Text>
-              <Text> Pending: {pendingNumber}</Text>
-              <Text> Completed: {completedNumber}</Text>
+              <Text style={styles.statusText}>
+                {" "}
+                Total: {pendingNumber + completedNumber}
+              </Text>
+              <Text style={styles.statusText}> Pending: {pendingNumber}</Text>
+              <Text style={styles.statusText}>
+                {" "}
+                Completed: {completedNumber}
+              </Text>
             </View>
             {loading ? (
               <View style={styles.loading}>
@@ -255,13 +260,6 @@ const ToDoListScreen = () => {
               onChangeText={(text) => setNormalTask(text)}
             />
             <TouchableOpacity onPress={() => handleAddTask()}>
-              {/* <View style={styles.addWrapper}> */}
-              {/* <FontAwesome
-                name="plus"
-                size={20}
-                color={"rgba(245, 233, 188, 1)"}
-              /> */}
-
               <Image
                 source={require("../images/bee/cute-bee.png")}
                 resizeMode="contain"
@@ -327,6 +325,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  addText: {},
+  statusText: {
+    color: "grey",
+    fontWeight: "bold",
+  },
 });
 export default ToDoListScreen;
