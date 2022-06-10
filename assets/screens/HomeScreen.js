@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -8,12 +8,14 @@ import {
   ScrollView,
   Dimensions,
   Image,
+  ActivityIndicator,
 } from "react-native";
-import { Alert } from "react-native-web";
-import { authentication } from "../../firebase/firebase-config";
 import { StatusBar } from "expo-status-bar";
 import * as Components from "../components/homeComponents/index";
 import moment from "moment";
+import { query, collection, getDocs, where } from "firebase/firestore";
+import { db, authentication } from "../../firebase/firebase-config";
+
 const { height, width } = Dimensions.get("screen");
 
 const HomeScreen = ({ navigation }) => {
@@ -26,83 +28,175 @@ const HomeScreen = ({ navigation }) => {
       .catch((error) => Alert.alert(error.message));
   };
 
+  const [completedCount, setCompletedCount] = useState(0);
+
+  const [pendingCount, setPendingCount] = useState(0);
+
+  const [loading, setLoading] = useState(false);
+
+  const [refresh, setRefresh] = useState(false);
+
+  const [todaysSpending, setTodaysSpending] = useState(0);
+
+  const month = moment().format("M");
+  const year = moment().format("YYYY");
+  const date = moment().format("D");
+
+  const refreshPage = () => {
+    setRefresh(!refresh);
+  };
+
+  const getData = async () => {
+    try {
+      setLoading(true);
+
+      // querying the todo list
+      const todoCol = query(
+        collection(db, "to do: " + authentication.currentUser.uid)
+      );
+      const todoSnapshot = await getDocs(todoCol);
+      let tempCompleted = 0;
+      let tempPending = 0;
+      todoSnapshot.forEach((doc) => {
+        const { complete } = doc.data();
+        if (complete) {
+          tempCompleted++;
+        } else if (!complete) {
+          tempPending++;
+        }
+      });
+      setLoading(false);
+      setCompletedCount(tempCompleted);
+      setPendingCount(tempPending);
+
+      // querying the expense tracker
+      let spending = 0.0;
+      const q = query(
+        collection(db, "expenses: " + authentication.currentUser.uid),
+        where("dates", "==", date.toString()),
+        where("months", "==", month.toString()),
+        where("years", "==", year.toString())
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const { expense, expenseType } = doc.data();
+        if (expenseType == "add") {
+          spending = spending + Number(expense);
+        } else {
+          spending = spending - Number(expense);
+        }
+      });
+      setTodaysSpending(spending);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // immediately queries from firestore when screen renders
+  // screen re-renders everytime the refresh boolean is changed
+  useEffect(() => {
+    getData();
+  }, [refresh]);
+
   return (
-    <SafeAreaView style={{ backgroundColor: "white" }}>
+    <SafeAreaView style={{ backgroundColor: "white", flex: 1 }}>
       <StatusBar style="auto" />
-      <View style={{ marginBottom: 20 }}>
-        <ScrollView style={{ height: "100%" }}>
+      <View
+        style={{
+          marginBottom: 20,
+        }}
+      >
+        {/* if data is still being queries, then show the loading symbol
+        if data is done, then show the scrollview */}
+        {loading ? (
           <View
             style={{
-              justifyContent: "center",
-              alignItems: "center",
+              position: "absolute",
+              marginLeft: width / 2 - 15,
+              marginTop: height / 2 - 60,
             }}
           >
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                {/* pass in user's name here */}
-                <Components.WelcomeHeader
-                  name={"Bernice"}
-                  style={styles.WelcomeHeaderContainer}
-                />
-              </View>
-              <Image
-                source={require("../images/bee/beeside.png")}
-                resizeMode="contain"
-                style={{
-                  height: 140,
-                  width: 140,
-                  marginLeft: 70,
-                  marginRight: 10,
-                }}
-              />
-            </View>
-            <View style={styles.dateContainer}>
-              <Text style={styles.dateText}>
-                {moment().format("dddd")}, {moment().format("ll")}
-              </Text>
-            </View>
-
-            <View>
-              <Components.FavouriteGroups
-                style={styles.FavouriteGroupsContainer}
-              />
-            </View>
-
-            <View>
-              <Components.EventsToday style={styles.EventsTodayContainer} />
-            </View>
-
+            <ActivityIndicator size={"large"} />
+          </View>
+        ) : (
+          <ScrollView style={{ height: "100%" }}>
             <View
               style={{
-                flexDirection: "row",
+                justifyContent: "center",
                 alignItems: "center",
-                marginTop: 25,
               }}
             >
-              <Components.ExpensesToday
-                amountSpentToday={30}
-                budgetToday={40}
-                style={styles.ExpensesTodayContainer}
-              />
-              <Components.ToDosToday
-                style={styles.ToDosTodayContainer}
-                numberPending={3}
-                numberCompleted={4}
-              />
-            </View>
-          </View>
-          <View>
-            <TouchableOpacity
-              style={styles.logout}
-              onPress={() => handleSignOut()}
-            >
-              <Text style={styles.logoutText}>Log out!</Text>
-            </TouchableOpacity>
-          </View>
+              <View style={{ flexDirection: "row" }}>
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  {/* pass in user's name here */}
+                  <Components.WelcomeHeader
+                    name={"Bernice"}
+                    style={styles.WelcomeHeaderContainer}
+                  />
+                </View>
+                <TouchableOpacity onPress={() => refreshPage()}>
+                  <Image
+                    source={require("../images/bee/beeside.png")}
+                    resizeMode="contain"
+                    style={{
+                      height: 140,
+                      width: 140,
+                      marginLeft: 70,
+                      marginRight: 10,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.dateContainer}>
+                <Text style={styles.dateText}>
+                  {moment().format("dddd")}, {moment().format("ll")}
+                </Text>
+              </View>
 
-          {/* empty view to pad scrollview and tab bar */}
-          <View style={{ height: 50 }}></View>
-        </ScrollView>
+              <View>
+                <Components.FavouriteGroups
+                  style={styles.FavouriteGroupsContainer}
+                />
+              </View>
+
+              <View>
+                <Components.EventsToday style={styles.EventsTodayContainer} />
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 25,
+                }}
+              >
+                <Components.ExpensesToday
+                  amountSpentToday={todaysSpending}
+                  budgetToday={40}
+                  style={styles.ExpensesTodayContainer}
+                />
+                <Components.ToDosToday
+                  style={styles.ToDosTodayContainer}
+                  numberPending={pendingCount}
+                  numberCompleted={completedCount}
+                />
+              </View>
+            </View>
+            <View>
+              <TouchableOpacity
+                style={styles.logout}
+                onPress={() => handleSignOut()}
+              >
+                <Text style={styles.logoutText}>Log out!</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* empty view to pad scrollview and tab bar */}
+            <View style={{ height: 50 }}></View>
+          </ScrollView>
+        )}
       </View>
     </SafeAreaView>
   );

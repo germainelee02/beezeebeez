@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import {
   Button,
   View,
-  SafeAreaView,
   StyleSheet,
   Text,
   Image,
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { authentication } from "../../firebase/firebase-config";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -47,51 +48,59 @@ const LoginScreen = ({ navigation }) => {
     setIcon(iconName);
   };
   return (
-    <KeyboardAvoidingView style={styles.background}>
-      <TouchableOpacity
-        style={styles.signUp}
-        onPress={() => navigation.navigate("signup")}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={styles.background}
       >
-        <Text style={styles.signUpText}> Sign Up </Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.signUp}
+          onPress={() => navigation.navigate("signup")}
+        >
+          <Text style={styles.signUpText}> Sign Up </Text>
+        </TouchableOpacity>
 
-      <Image style={styles.image} source={require("../bee-logo.png")} />
-      <TextInput
-        placeholder="Email..."
-        autoCapitalize="none"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-        style={styles.emailBox}
-      />
-
-      <View style={styles.passwordContainer}>
+        <Image
+          style={styles.image}
+          source={require("../images/bee/bees.png")}
+        />
         <TextInput
-          placeholder="Password..."
-          secureTextEntry={canSee}
-          value={password}
-          onChangeText={(pass) => setPassword(pass)}
+          placeholder="Email..."
           autoCapitalize="none"
-          style={styles.passwordText}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+          style={styles.emailBox}
         />
 
-        <TouchableOpacity onPress={() => onIconPress()}>
-          <MaterialCommunityIcons name={icon} size={25} />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder="Password..."
+            secureTextEntry={canSee}
+            value={password}
+            onChangeText={(pass) => setPassword(pass)}
+            autoCapitalize="none"
+            style={styles.passwordText}
+          />
+
+          <TouchableOpacity onPress={() => onIconPress()}>
+            <MaterialCommunityIcons name={icon} size={25} />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => handleLogin()}
+        >
+          <Text style={styles.loginText}> Login </Text>
         </TouchableOpacity>
-      </View>
 
-      <TouchableOpacity
-        style={styles.loginButton}
-        onPress={() => handleLogin()}
-      >
-        <Text style={styles.loginText}> Login </Text>
-      </TouchableOpacity>
-
-      {/* remove this after done */}
-      <Button
-        title="direct shortcut to home page (delete this after done)"
-        onPress={() => navigation.navigate("temp home")}
-      />
-    </KeyboardAvoidingView>
+        {/* remove this after done */}
+        <Button
+          title="direct shortcut to home page (delete this after done)"
+          onPress={() => navigation.navigate("temp home")}
+        />
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -111,9 +120,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   image: {
-    height: "50%",
-    width: "50%",
+    height: "35%",
+    width: "40%",
     margin: 0,
+    resizeMode: "contain",
   },
   loginButton: {
     width: "50%",

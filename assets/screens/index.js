@@ -5,6 +5,7 @@ import FriendsScreen from "./FriendsScreen";
 import HomeScreen from "./HomeScreen";
 import LoginScreen from "./LoginScreen";
 import SignUpScreen from "./SignUpScreen";
+import MonthlyExpenseScreen from "./MonthlyExpenseScreen";
 export {
   LoginScreen,
   SignUpScreen,
@@ -13,4 +14,5 @@ export {
   ToDoScreen,
   CalendarScreen,
   FriendsScreen,
+  MonthlyExpenseScreen,
 };

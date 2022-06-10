@@ -9,10 +9,13 @@ import {
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { authentication } from "../../firebase/firebase-config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 function SignUpScreen(props) {
   // the email that is saved and used to log in
@@ -57,52 +60,61 @@ function SignUpScreen(props) {
     }
   };
   return (
-    <KeyboardAvoidingView style={styles.background}>
-      <Image style={styles.image} source={require("../bee-logo.png")} />
-      <TextInput
-        placeholder="Email..."
-        // when the user types in, it changes the `email` state at the top
-        onChangeText={(text) => setEmail(text)}
-        autoCapitalize="none"
-        style={styles.emailBox}
-      />
-      <View style={styles.passwordContainer}>
-        <TextInput
-          placeholder="Password..."
-          secureTextEntry={canSeePass}
-          // when user types in the password, it changes `password` state at the top
-          onChangeText={(text) => setPassword(text)}
-          autoCapitalize="none"
-          style={styles.passwordText}
-        />
-
-        <TouchableOpacity onPress={() => onPassIconPress()}>
-          <MaterialCommunityIcons name={iconPass} size={25} />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.passwordContainer}>
-        <TextInput
-          placeholder="Re-enter password..."
-          // changes `repassword` state at the top when user types in repassword
-          secureTextEntry={canSeeRepass}
-          autoCapitalize="none"
-          onChangeText={(text) => setRepassword(text)}
-          style={styles.passwordText}
-        />
-
-        <TouchableOpacity onPress={() => onRepassIconPress()}>
-          <MaterialCommunityIcons name={iconRepass} size={25} />
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity
-        style={styles.loginButton}
-        // when button is pressed, signs up
-        onPress={() => handleSignUp()}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={useHeaderHeight()}
+        style={styles.background}
       >
-        <Text style={styles.loginText}> Sign up! </Text>
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+        <Image
+          style={styles.image}
+          source={require("../images/bee/bees.png")}
+        />
+        <TextInput
+          placeholder="Email..."
+          // when the user types in, it changes the `email` state at the top
+          onChangeText={(text) => setEmail(text)}
+          autoCapitalize="none"
+          style={styles.emailBox}
+        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder="Password..."
+            secureTextEntry={canSeePass}
+            // when user types in the password, it changes `password` state at the top
+            onChangeText={(text) => setPassword(text)}
+            autoCapitalize="none"
+            style={styles.passwordText}
+          />
+
+          <TouchableOpacity onPress={() => onPassIconPress()}>
+            <MaterialCommunityIcons name={iconPass} size={25} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder="Re-enter password..."
+            // changes `repassword` state at the top when user types in repassword
+            secureTextEntry={canSeeRepass}
+            autoCapitalize="none"
+            onChangeText={(text) => setRepassword(text)}
+            style={styles.passwordText}
+          />
+
+          <TouchableOpacity onPress={() => onRepassIconPress()}>
+            <MaterialCommunityIcons name={iconRepass} size={25} />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={styles.loginButton}
+          // when button is pressed, signs up
+          onPress={() => handleSignUp()}
+        >
+          <Text style={styles.loginText}> Sign up! </Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -122,9 +134,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   image: {
-    height: "50%",
-    width: "50%",
+    height: "35%",
+    width: "40%",
     margin: 0,
+    resizeMode: "contain",
   },
   loginButton: {
     width: "50%",

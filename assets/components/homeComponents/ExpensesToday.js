@@ -4,9 +4,21 @@ const { height, width } = Dimensions.get("screen");
 const ExpensesToday = (props) => {
   return (
     <View style={props.style}>
-      <Text style={styles.header}>Today's Spending</Text>
+      <Text style={styles.header}>Today's Cash Flow</Text>
       <View style={[styles.container]}>
-        <Text style={styles.amount}>${props.amountSpentToday}</Text>
+        {props.amountSpentToday == 0 ? (
+          <Text style={styles.amount}>
+            ${props.amountSpentToday.toFixed(2)}
+          </Text>
+        ) : props.amountSpentToday > 0 ? (
+          <Text style={styles.amount}>
+            +${props.amountSpentToday.toFixed(2)}
+          </Text>
+        ) : (
+          <Text style={styles.amount}>
+            -${-props.amountSpentToday.toFixed(2)}
+          </Text>
+        )}
 
         {/* <Text>Your budget today is {props.budgetToday}</Text> */}
       </View>
@@ -31,7 +43,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   amount: {
-    fontSize: 40,
+    fontSize: 30,
     color: "gray",
     fontWeight: "bold",
   },

@@ -26,6 +26,11 @@ const AppNavigator = () => {
           component={TabNavigator}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="monthly expenses"
+          component={Screens.MonthlyExpenseScreen}
+          options={{ headerShown: true, title: "" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
