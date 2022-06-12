@@ -140,14 +140,14 @@ const HomeScreen = ({ navigation }) => {
                   <View style={styles.menuContainer}>
                     <TouchableOpacity onPress={() => navigation.openDrawer()}>
                       <Image
-                        source={require("../icons/menuRight.png")}
+                        source={require("../assets/icons/menuRight.png")}
                         style={{ tintColor: "gray" }}
                       />
                     </TouchableOpacity>
                   </View>
                   <TouchableOpacity onPress={() => refreshPage()}>
                     <Image
-                      source={require("../images/bee/beeside.png")}
+                      source={require("../assets/images/bee/beeside.png")}
                       resizeMode="contain"
                       style={{
                         height: 140,

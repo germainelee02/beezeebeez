@@ -42,7 +42,7 @@ const TabNavigator = () => {
               }}
             >
               <Image
-                source={require("../../icons/tabBarIcons/cal.png")}
+                source={require("../../assets/icons/tabBarIcons/cal.png")}
                 resizeMode="contain"
                 style={{
                   width: 25,
@@ -73,7 +73,7 @@ const TabNavigator = () => {
               }}
             >
               <Image
-                source={require("../../icons/tabBarIcons/todo.png")}
+                source={require("../../assets/icons/tabBarIcons/todo.png")}
                 resizeMode="contain"
                 style={{
                   width: 25,
@@ -104,7 +104,7 @@ const TabNavigator = () => {
               }}
             >
               <Image
-                source={require("../../icons/tabBarIcons/home.png")}
+                source={require("../../assets/icons/tabBarIcons/home.png")}
                 resizeMode="contain"
                 style={{
                   width: 25,
@@ -135,7 +135,7 @@ const TabNavigator = () => {
               }}
             >
               <Image
-                source={require("../../icons/tabBarIcons/expense.png")}
+                source={require("../../assets/icons/tabBarIcons/expense.png")}
                 resizeMode="contain"
                 style={{
                   width: 25,
@@ -167,7 +167,7 @@ const TabNavigator = () => {
               }}
             >
               <Image
-                source={require("../../icons/tabBarIcons/friends.png")}
+                source={require("../../assets/icons/tabBarIcons/friends.png")}
                 resizeMode="contain"
                 style={{
                   width: 25,

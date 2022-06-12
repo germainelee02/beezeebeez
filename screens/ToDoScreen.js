@@ -261,7 +261,7 @@ const ToDoListScreen = () => {
             />
             <TouchableOpacity onPress={() => handleAddTask()}>
               <Image
-                source={require("../images/bee/cute-bee.png")}
+                source={require("../assets/images/bee/cute-bee.png")}
                 resizeMode="contain"
                 style={styles.addWrapper}
               />

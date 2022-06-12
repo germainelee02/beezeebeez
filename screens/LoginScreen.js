@@ -62,7 +62,7 @@ const LoginScreen = ({ navigation }) => {
 
         <Image
           style={styles.image}
-          source={require("../images/bee/bees.png")}
+          source={require("../assets/images/bee/bees.png")}
         />
         <TextInput
           placeholder="Email..."
