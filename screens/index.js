@@ -6,6 +6,7 @@ import HomeScreen from "./HomeScreen";
 import LoginScreen from "./LoginScreen";
 import SignUpScreen from "./SignUpScreen";
 import MonthlyExpenseScreen from "./MonthlyExpenseScreen";
+import ProfileScreen from "./ProfileScreen";
 export {
   LoginScreen,
   SignUpScreen,
@@ -15,4 +16,5 @@ export {
   CalendarScreen,
   FriendsScreen,
   MonthlyExpenseScreen,
+  ProfileScreen,
 };

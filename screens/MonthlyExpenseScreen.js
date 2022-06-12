@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { db, authentication } from "../../firebase/firebase-config";
+import { db, authentication } from "../firebase/firebase-config";
 import {
   collection,
   getDocs,

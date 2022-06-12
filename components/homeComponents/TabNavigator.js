@@ -1,7 +1,8 @@
+import React, { Component } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import * as Screens from "../../screens/index";
-
+import HomeDrawer from "./HomeDrawer";
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -88,7 +89,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Home"
-        component={Screens.HomeScreen}
+        component={HomeDrawer}
         options={{
           tabBarIcon: ({ focused }) => (
             <View

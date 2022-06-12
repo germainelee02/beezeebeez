@@ -1,25 +1,25 @@
 import React, { Component } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { FlatList } from "react-native";
-import GroupItem from "./items/GroupItem";
+import GroupItem from "../homeComponents/items/GroupItem";
 
 const FavouriteGroups = (props) => {
   const groups = [
     {
       groupname: "Family",
-      imageUrl: require("../../images/group/blank-profile-picture.png"),
+      imageUrl: require("../../assets/images/group/blank-profile-picture.png"),
     },
     {
       groupname: "Work pals",
-      imageUrl: require("../../images/group/blank-profile-picture.png"),
+      imageUrl: require("../../assets/images/group/blank-profile-picture.png"),
     },
     {
       groupname: "JC classmates",
-      imageUrl: require("../../images/group/blank-profile-picture.png"),
+      imageUrl: require("../../assets/images/group/blank-profile-picture.png"),
     },
     {
       groupname: "Random group",
-      imageUrl: require("../../images/group/blank-profile-picture.png"),
+      imageUrl: require("../../assets/images/group/blank-profile-picture.png"),
     },
   ];
   return (

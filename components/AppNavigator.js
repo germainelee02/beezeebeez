@@ -1,7 +1,9 @@
+import React, { Component } from "react";
 import * as Screens from "../screens/index";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TabNavigator from "./homeComponents/TabNavigator";
+
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
