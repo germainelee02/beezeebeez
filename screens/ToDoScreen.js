@@ -102,7 +102,6 @@ const ToDoListScreen = () => {
 
   const handleAddTask = async () => {
     Keyboard.dismiss();
-    // check that the input string is not empty or contains only whitespaces
     if (task) {
       //  setTaskItems([...taskItems, task]);
       const docRef = await addDoc(
@@ -117,9 +116,20 @@ const ToDoListScreen = () => {
       await updateDoc(docRef, {
         id: docRef.id,
       });
+      let array = [
+        {
+          task: task,
+          pinned: pinned,
+          complete: false,
+          timeSent: serverTimestamp(),
+        },
+        ...taskItems,
+      ];
+      console.log(array);
+      setTaskItems(array);
       setTask("");
       setPinned(false);
-      refreshPage();
+      // refreshPage();
     } else {
       Alert.alert("Please write a task before pressing the add button!");
     }
@@ -132,8 +142,13 @@ const ToDoListScreen = () => {
       "to do: " + authentication.currentUser.uid,
       pinnedItem.id
     );
-    await updateDoc(docRef, { pinned: true });
-    refreshPage();
+    await updateDoc(docRef, { pinned: true, timeSent: serverTimestamp() });
+    setImportantTaskItems([pinnedItem, ...importantTaskItems]);
+    let array = [...taskItems];
+    array.splice(index, 1);
+    setTaskItems(array);
+
+    // refreshPage();
   };
 
   const unpinTask = async (index) => {
@@ -174,7 +189,10 @@ const ToDoListScreen = () => {
     await deleteDoc(
       doc(db, "to do: " + authentication.currentUser.uid, item.id)
     );
-    refreshPage();
+    let array = [...taskItems];
+    array.splice(index, 1);
+    setTaskItems(array);
+    //refreshPage();
   };
 
   const deleteImportantTask = async (index) => {
@@ -182,7 +200,10 @@ const ToDoListScreen = () => {
     await deleteDoc(
       doc(db, "to do: " + authentication.currentUser.uid, item.id)
     );
-    refreshPage();
+    let array = [...importantTaskItems];
+    array.splice(index, 1);
+    setImportantTaskItems(array);
+    // refreshPage();
   };
 
   const HandleOutsideTouches = () => {
@@ -220,6 +241,7 @@ const ToDoListScreen = () => {
                   return (
                     <ImportantTask
                       text={item.task}
+                      pinned={item.pinned}
                       index={index}
                       key={index}
                       deleteImportantTask={deleteImportantTask}
@@ -233,6 +255,7 @@ const ToDoListScreen = () => {
                   return (
                     <Task
                       text={item.task}
+                      pinned={item.pinned}
                       index={index}
                       key={index}
                       deleteTask={deleteTask}
