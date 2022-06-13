@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import Task from "../components/TaskComponents.js/Task";
 import ImportantTask from "../components/TaskComponents.js/ImportantTask";
-import { db, authentication } from "../../firebase/firebase-config";
+import { db, authentication } from "../firebase/firebase-config";
 import {
   collection,
   getDocs,
@@ -261,7 +261,7 @@ const ToDoListScreen = () => {
             />
             <TouchableOpacity onPress={() => handleAddTask()}>
               <Image
-                source={require("../images/bee/cute-bee.png")}
+                source={require("../assets/images/bee/cute-bee.png")}
                 resizeMode="contain"
                 style={styles.addWrapper}
               />
@@ -296,6 +296,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: "bold",
+    letterSpacing: -1,
   },
   taskWrapper: {
     paddingTop: 40,

@@ -14,7 +14,7 @@ import {
   Image,
 } from "react-native";
 import { FontAwesome, EvilIcons } from "@expo/vector-icons";
-import { db, authentication } from "../../firebase/firebase-config";
+import { db, authentication } from "../firebase/firebase-config";
 import {
   collection,
   getDocs,
@@ -310,7 +310,7 @@ const ExpenseTrackerScreen = ({ navigation }) => {
             >
               <View>
                 <Image
-                  source={require("../images/bee/bee-left.png")}
+                  source={require("../assets/images/bee/bee-left.png")}
                   resizeMode="contain"
                   style={styles.addWrapper}
                 />
@@ -369,6 +369,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: "bold",
+    letterSpacing: -1,
   },
   expensesWrapper: {
     paddingTop: 20,

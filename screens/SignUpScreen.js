@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { authentication } from "../../firebase/firebase-config";
+import { authentication } from "../firebase/firebase-config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -68,7 +68,7 @@ function SignUpScreen(props) {
       >
         <Image
           style={styles.image}
-          source={require("../images/bee/bees.png")}
+          source={require("../assets/images/bee/bees.png")}
         />
         <TextInput
           placeholder="Email..."

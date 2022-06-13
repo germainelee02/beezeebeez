@@ -1,4 +1,4 @@
-import AppNavigator from "./assets/components/AppNavigator";
+import AppNavigator from "./components/AppNavigator";
 
 export default function App() {
   return <AppNavigator />;

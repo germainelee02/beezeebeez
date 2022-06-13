@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { authentication } from "../../firebase/firebase-config";
+import { authentication } from "../firebase/firebase-config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -62,7 +62,7 @@ const LoginScreen = ({ navigation }) => {
 
         <Image
           style={styles.image}
-          source={require("../images/bee/bees.png")}
+          source={require("../assets/images/bee/bees.png")}
         />
         <TextInput
           placeholder="Email..."

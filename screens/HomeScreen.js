@@ -14,7 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import * as Components from "../components/homeComponents/index";
 import moment from "moment";
 import { query, collection, getDocs, where } from "firebase/firestore";
-import { db, authentication } from "../../firebase/firebase-config";
+import { db, authentication } from "../firebase/firebase-config";
 
 const { height, width } = Dimensions.get("screen");
 
@@ -136,23 +136,28 @@ const HomeScreen = ({ navigation }) => {
                     style={styles.WelcomeHeaderContainer}
                   />
                 </View>
-                <TouchableOpacity onPress={() => refreshPage()}>
-                  <Image
-                    source={require("../images/bee/beeside.png")}
-                    resizeMode="contain"
-                    style={{
-                      height: 140,
-                      width: 140,
-                      marginLeft: 70,
-                      marginRight: 10,
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.dateContainer}>
-                <Text style={styles.dateText}>
-                  {moment().format("dddd")}, {moment().format("ll")}
-                </Text>
+                <View>
+                  <View style={styles.menuContainer}>
+                    <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                      <Image
+                        source={require("../assets/icons/menuRight.png")}
+                        style={{ tintColor: "gray" }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity onPress={() => refreshPage()}>
+                    <Image
+                      source={require("../assets/images/bee/beeside.png")}
+                      resizeMode="contain"
+                      style={{
+                        height: 140,
+                        width: 140,
+                        marginLeft: 50,
+                        marginRight: 20,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
 
               <View>
@@ -208,26 +213,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  dateContainer: {
-    marginTop: 10,
-    width: width - 40,
-  },
   dateText: {
     fontSize: 16,
     textAlign: "left",
   },
+  menuContainer: {
+    marginLeft: 180,
+    borderRadius: 10,
+    padding: 5,
+  },
   WelcomeHeaderContainer: {
     textAlign: "left",
-    marginTop: 50,
+    marginTop: 70,
     flex: 1,
     width: "100%",
-  },
-  tasksPendingContainer: {
-    flex: 1,
-    width: "90%",
+    height: 120,
   },
   FavouriteGroupsContainer: {
-    marginTop: 20,
+    marginTop: 0,
     height: 200,
     width: width - 40,
   },
@@ -237,6 +240,7 @@ const styles = StyleSheet.create({
   ExpensesTodayContainer: {
     marginRight: 18,
   },
+  ToDosTodayContainer: {},
   logout: {
     justifyContent: "center",
     alignItems: "center",

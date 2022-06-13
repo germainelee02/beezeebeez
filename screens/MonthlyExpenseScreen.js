@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { db, authentication } from "../../firebase/firebase-config";
+import { db, authentication } from "../firebase/firebase-config";
 import {
   collection,
   getDocs,
@@ -207,7 +207,7 @@ const MonthlyExpenseScreen = ({ navigation }) => {
                   <Text style={{ color: "grey" }}>Search</Text>
                 </View> */}
                 <Image
-                  source={require("../images/bee/bee-left.png")}
+                  source={require("../assets/images/bee/bee-left.png")}
                   resizeMode="contain"
                   style={styles.addWrapper}
                 />
