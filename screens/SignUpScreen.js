@@ -11,13 +11,34 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Dimensions,
 } from "react-native";
-import { authentication } from "../firebase/firebase-config";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { db, authentication } from "../firebase/firebase-config";
+import {
+  collection,
+  getDocs,
+  orderBy,
+  doc,
+  query,
+  updateDoc,
+  addDoc,
+  serverTimestamp,
+  deleteDoc,
+  setDoc,
+} from "firebase/firestore";
+
+const { height, width } = Dimensions.get("screen");
 
 function SignUpScreen(props) {
+  // the first name of user that is saved and stored
+  const [firstName, setFirstName] = useState("");
+
+  // the last name of user that is saved and stored
+  const [lastName, setLastName] = useState("");
+
   // the email that is saved and used to log in
   const [email, setEmail] = useState("");
 
@@ -46,6 +67,7 @@ function SignUpScreen(props) {
     setCanSeeRepass(!canSeeRepass);
     setIconRepass(iconName);
   };
+
   // function that uses firebase to sign up for an account
   const handleSignUp = () => {
     if (password == repassword) {
@@ -53,12 +75,20 @@ function SignUpScreen(props) {
         .then((userCredentials) => {
           const user = userCredentials.user;
           console.log(user.email);
+          // adds user into the firestore data base under "users" collection
+          // and doc labelled with its user uid
+          setDoc(doc(db, "users", getAuth().currentUser.uid), {
+            email: email,
+            fName: firstName,
+            lName: lastName,
+          });
         })
         .catch((error) => alert(error.message));
     } else {
       Alert.alert("Error", "Password mismatch");
     }
   };
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView
@@ -69,6 +99,20 @@ function SignUpScreen(props) {
         <Image
           style={styles.image}
           source={require("../assets/images/bee/bees.png")}
+        />
+        <TextInput
+          placeholder="First name..."
+          // when the user types in, it changes the `firstName` state at the top
+          onChangeText={(text) => setFirstName(text)}
+          autoCapitalize="words"
+          style={styles.NameBox}
+        />
+        <TextInput
+          placeholder="Last name..."
+          // when the user types in, it changes the `lastName` state at the top
+          onChangeText={(text) => setLastName(text)}
+          autoCapitalize="words"
+          style={styles.NameBox}
         />
         <TextInput
           placeholder="Email..."
@@ -125,16 +169,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  NameBox: {
+    height: 70,
+    width: width - 40,
+    backgroundColor: "white",
+    margin: 10,
+    borderRadius: 15,
+    padding: 10,
+  },
   emailBox: {
     height: 70,
-    width: "95%",
+    width: width - 40,
     backgroundColor: "white",
     margin: 10,
     borderRadius: 15,
     padding: 10,
   },
   image: {
-    height: "35%",
+    height: "25%",
     width: "40%",
     margin: 0,
     resizeMode: "contain",
@@ -160,7 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     height: 70,
-    width: "95%",
+    width: width - 40,
   },
   passwordText: {
     flex: 1,

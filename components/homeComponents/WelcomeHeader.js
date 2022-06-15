@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
 import moment from "moment";
 const WelcomeHeader = (props) => {
+  const name = props.name;
   return (
     <View style={props.style}>
       <Text style={styles.headerText1}>Hello,</Text>
-      <Text style={styles.headerText2}> {props.name}</Text>
+      <Text style={styles.headerText2}>{name}</Text>
       <Text style={styles.dateText}>
         {moment().format("dddd")}, {moment().format("ll")}
       </Text>
@@ -20,7 +21,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
     textAlign: "left",
-    marginLeft: 5,
     lineHeight: 40,
   },
   headerText2: {
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
   },
   dateText: {
     textAlign: "left",
-    marginLeft: 5,
     marginTop: 10,
+    width: " 100%",
   },
 });
 

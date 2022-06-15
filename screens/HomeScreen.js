@@ -13,9 +13,18 @@ import {
 import { StatusBar } from "expo-status-bar";
 import * as Components from "../components/homeComponents/index";
 import moment from "moment";
-import { query, collection, getDocs, where } from "firebase/firestore";
+import {
+  query,
+  collection,
+  getDocs,
+  where,
+  doc,
+  getDoc,
+  DocumentReference,
+} from "firebase/firestore";
 import { db, authentication } from "../firebase/firebase-config";
-
+import { Auth, getAuth } from "firebase/auth";
+import { userConverter } from "../configs/User";
 const { height, width } = Dimensions.get("screen");
 
 const HomeScreen = ({ navigation }) => {
@@ -38,6 +47,8 @@ const HomeScreen = ({ navigation }) => {
 
   const [todaysSpending, setTodaysSpending] = useState(0);
 
+  const [userName, setUserName] = useState("");
+
   const month = moment().format("M");
   const year = moment().format("YYYY");
   const date = moment().format("D");
@@ -49,6 +60,18 @@ const HomeScreen = ({ navigation }) => {
   const getData = async () => {
     try {
       setLoading(true);
+
+      //querying user's info
+      const usersDocRef = doc(
+        db,
+        "users",
+        getAuth().currentUser.uid
+      ).withConverter(userConverter);
+      const userRefSnap = await getDoc(usersDocRef);
+      if (userRefSnap.exists()) {
+        const user = userRefSnap.data();
+        setUserName(user.fName);
+      }
 
       // querying the todo list
       const todoCol = query(
@@ -126,17 +149,22 @@ const HomeScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row", width: width - 40 }}>
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
                 >
                   {/* pass in user's name here */}
                   <Components.WelcomeHeader
-                    name={"Bernice"}
+                    name={userName}
                     style={styles.WelcomeHeaderContainer}
                   />
                 </View>
-                <View>
+                <View
+                  style={{
+                    flex: 1,
+                    width: 200,
+                  }}
+                >
                   <View style={styles.menuContainer}>
                     <TouchableOpacity onPress={() => navigation.openDrawer()}>
                       <Image
@@ -149,12 +177,7 @@ const HomeScreen = ({ navigation }) => {
                     <Image
                       source={require("../assets/images/bee/beeside.png")}
                       resizeMode="contain"
-                      style={{
-                        height: 140,
-                        width: 140,
-                        marginLeft: 50,
-                        marginRight: 20,
-                      }}
+                      style={styles.beeContainer}
                     />
                   </TouchableOpacity>
                 </View>
@@ -218,15 +241,13 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   menuContainer: {
-    marginLeft: 180,
-    borderRadius: 10,
-    padding: 5,
+    alignItems: "flex-end",
+    marginRight: 0,
   },
   WelcomeHeaderContainer: {
     textAlign: "left",
     marginTop: 70,
     flex: 1,
-    width: "100%",
     height: 120,
   },
   FavouriteGroupsContainer: {
@@ -253,6 +274,13 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     fontWeight: "bold",
+  },
+  beeContainer: {
+    height: 140,
+    width: 140,
+    marginLeft: 30,
+    marginRight: 20,
+    marginTop: 5,
   },
 });
 

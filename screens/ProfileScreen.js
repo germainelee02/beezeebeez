@@ -15,14 +15,7 @@ const { height, width } = Dimensions.get("screen");
 const ProfileScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-          alignContent: "center",
-        }}
-      >
+      <ScrollView style={styles.container}>
         <View style={styles.menuContainer}>
           <TouchableOpacity onPress={() => navigation.openDrawer()}>
             <Image
@@ -31,26 +24,23 @@ const ProfileScreen = ({ navigation }) => {
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.headerName}>Profile screen</Text>
       </ScrollView>
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingRight: 40,
-    paddingLeft: 40,
-    paddingTop: 10,
+    height: "100%",
+    width: "100%",
   },
-  headerName: {
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: "center",
-  },
+
   menuContainer: {
-    marginLeft: width - 80,
-    marginTop: 5,
+    alignItems: "flex-end",
+    marginRight: 20,
+  },
+  userName: {
+    fontWeight: "bold",
+    fontSize: 20,
   },
 });
 export default ProfileScreen;
