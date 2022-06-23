@@ -125,7 +125,6 @@ const ToDoListScreen = () => {
         },
         ...taskItems,
       ];
-      console.log(array);
       setTaskItems(array);
       setTask("");
       setPinned(false);

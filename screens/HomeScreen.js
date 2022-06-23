@@ -123,6 +123,10 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "white", flex: 1 }}>
+      {/* just a random button to bring you to the mood tracking page */}
+      <TouchableOpacity onPress={() => navigation.navigate("mood tracker")}>
+        <Text>mood</Text>
+      </TouchableOpacity>
       <StatusBar style="auto" />
       <View
         style={{
