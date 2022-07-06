@@ -80,7 +80,9 @@ function SignUpScreen(props) {
           setDoc(doc(db, "users", getAuth().currentUser.uid), {
             email: email,
             fName: firstName,
+            imgUrl: "",
             lName: lastName,
+            phoneNum: "",
           });
         })
         .catch((error) => alert(error.message));
@@ -93,7 +95,6 @@ function SignUpScreen(props) {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={useHeaderHeight()}
         style={styles.background}
       >
         <Image
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   NameBox: {
-    height: 70,
+    height: 50,
     width: width - 40,
     backgroundColor: "white",
     margin: 10,
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   emailBox: {
-    height: 70,
+    height: 50,
     width: width - 40,
     backgroundColor: "white",
     margin: 10,
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "white",
     borderRadius: 10,
-    height: 70,
+    height: 50,
     width: width - 40,
   },
   passwordText: {
