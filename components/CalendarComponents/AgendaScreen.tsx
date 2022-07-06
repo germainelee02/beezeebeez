@@ -84,7 +84,7 @@ const AgendaScreen = () => {
   const renderItem = (item: Item) => {
     return (
       <View style={styles.itemContainer}>
-        <Text>{item.title}</Text>
+        <Text>{item.name}</Text>
       </View>
     );
   };
