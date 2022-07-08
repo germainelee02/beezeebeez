@@ -19,6 +19,7 @@ const { height, width } = Dimensions.get("window");
 const ModalDatePicker = (props) => {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const onChange = (event, selectedDate) => {
     setDate(selectedDate);
@@ -31,7 +32,8 @@ const ModalDatePicker = (props) => {
 
   const handleConfirm = (date) => {
     setDate(date);
-    props.updateData(moment(date).format("DD MMMM YYYY, h:mm A"));
+    props.updateDate(moment(date).format("DD MMMM YYYY"));
+    props.updateTime(moment(date).format("h:mm A"));
     hideDatePicker();
   };
 
@@ -44,13 +46,35 @@ const ModalDatePicker = (props) => {
   return (
     <SafeAreaView>
       <View>
-        <View style={styles.dateBtnContainer}>
-          <TouchableOpacity onPress={() => setShow(true)}>
+        <View
+          style={[
+            styles.dateBtnContainer,
+            {
+              borderColor: props.error ? "red" : "grey",
+              alignItems: "center",
+            },
+          ]}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              setShow(true);
+              setIsFocused(true);
+            }}
+          >
             <Text>{formattedDate}</Text>
           </TouchableOpacity>
         </View>
-
-        {/* edited */}
+        {props.error && (
+          <View
+            style={{
+              height: 20,
+              justifyContent: "center",
+              marginTop: 3,
+            }}
+          >
+            <Text style={{ color: "red", fontSize: 12 }}>{props.error}</Text>
+          </View>
+        )}
         <DateTimePickerModal
           isVisible={show}
           mode="datetime"
@@ -60,31 +84,6 @@ const ModalDatePicker = (props) => {
           is24Hour={true}
           locale="em_GB"
         />
-
-        {/* <View>
-          {show && (
-            <View
-              style={{
-                marginTop: height - 450,
-                borderRadius: 1,
-                borderColor: "black",
-              }}
-            >
-              <View style={styles.doneBtnContainer}>
-                <TouchableOpacity onPress={() => close()}>
-                  <Text>Done</Text>
-                </TouchableOpacity>
-              </View>
-
-              <DateTimePicker
-                value={date}
-                mode={"date"}
-                display={Platform.OS === "ios" ? "spinner" : "default"}
-                onChange={onChange}
-              />
-            </View>
-          )}
-        </View> */}
       </View>
     </SafeAreaView>
   );
@@ -97,11 +96,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   dateBtnContainer: {
-    borderColor: "gray",
-    paddingVertical: 15,
-    borderColor: "gray",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    borderRadius: 10,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 0.5,
+    borderColor: "red",
+    // paddingHorizontal: 15,
+    justifyContent: "center",
+    flexDirection: "row",
   },
 });

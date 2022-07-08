@@ -241,7 +241,7 @@ const ProfileScreen = ({ navigation }) => {
                 </View>
                 <View>
                   <View>
-                    <Text style={styles.header}>Profile</Text>
+                    <Text style={styles.header}>Your Profile</Text>
                   </View>
                   {/* profile picture on profile screen */}
                   <View style={styles.profileImgContainer}>

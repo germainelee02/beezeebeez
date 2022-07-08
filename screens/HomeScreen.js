@@ -25,6 +25,7 @@ import {
 import { db, authentication } from "../firebase/firebase-config";
 import { Auth, getAuth } from "firebase/auth";
 import { userConverter } from "../configs/User";
+import WeekCalendar from "../components/homeComponents/WeekCalendar";
 const { height, width } = Dimensions.get("screen");
 
 const HomeScreen = ({ navigation }) => {
@@ -48,6 +49,8 @@ const HomeScreen = ({ navigation }) => {
   const [todaysSpending, setTodaysSpending] = useState(0);
 
   const [userName, setUserName] = useState("");
+
+  const [dateForCal, setDateForCal] = useState(new Date());
 
   const month = moment().format("M");
   const year = moment().format("YYYY");
@@ -153,7 +156,9 @@ const HomeScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <View style={{ flexDirection: "row", width: width - 40 }}>
+              <View
+                style={{ flexDirection: "row", width: width - 40, flex: 1 }}
+              >
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
                 >
@@ -250,12 +255,12 @@ const styles = StyleSheet.create({
   },
   WelcomeHeaderContainer: {
     textAlign: "left",
-    marginTop: 70,
+    marginTop: 50,
     flex: 1,
-    height: 120,
+    height: 210,
   },
   FavouriteGroupsContainer: {
-    marginTop: 0,
+    marginTop: 20,
     height: 200,
     width: width - 40,
   },
@@ -282,9 +287,8 @@ const styles = StyleSheet.create({
   beeContainer: {
     height: 140,
     width: 140,
-    marginLeft: 30,
-    marginRight: 20,
     marginTop: 5,
+    left: 60,
   },
 });
 
