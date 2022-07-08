@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
-const Input = ({ label, imgSource, error, onFocus = () => {}, ...props }) => {
+const Input = ({ label, error, onFocus = () => {}, ...props }) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
-    <View style={{ height: 90 }}>
+    <View style={{ height: 100 }}>
       <View
         style={{
           marginBottom: 20,
@@ -31,19 +31,7 @@ const Input = ({ label, imgSource, error, onFocus = () => {}, ...props }) => {
             },
           ]}
         >
-          <View
-            style={{
-              height: 25,
-              width: 25,
-              borderRightColor: "gray",
-              borderRightWidth: 0.3,
-              justifyContent: "center",
-            }}
-          >
-            <Image source={imgSource} style={styles.icon} />
-          </View>
-
-          <View style={styles.inputTextContainer}>
+          <View>
             <TextInput
               autoCorrect={false}
               onFocus={() => {
@@ -76,6 +64,7 @@ const Input = ({ label, imgSource, error, onFocus = () => {}, ...props }) => {
 const styles = StyleSheet.create({
   label: {
     marginBottom: 5,
+    fontWeight: "bold",
   },
   inputContainer: {
     height: 50,

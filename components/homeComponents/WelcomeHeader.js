@@ -1,15 +1,29 @@
-import React, { Component } from "react";
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
+import React, { Component, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  SafeAreaView,
+  Dimensions,
+} from "react-native";
 import moment from "moment";
+import WeekCalendar from "./WeekCalendar";
+const { height, width } = Dimensions.get("window");
+
 const WelcomeHeader = (props) => {
   const name = props.name;
+  const [date, setDate] = useState(new Date());
   return (
     <View style={props.style}>
-      <Text style={styles.headerText1}>Hello,</Text>
-      <Text style={styles.headerText2}>{name}</Text>
-      <Text style={styles.dateText}>
-        {moment().format("dddd")}, {moment().format("ll")}
-      </Text>
+      <View style={{ flex: 1, marginTop: 15 }}>
+        <Text style={styles.headerText1}>Hello,</Text>
+        <Text style={styles.headerText2}>{name}</Text>
+      </View>
+
+      <View style={styles.weekCalContainer}>
+        <WeekCalendar date={date} />
+      </View>
     </View>
   );
 };
@@ -32,10 +46,18 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     marginBottom: 0,
   },
-  dateText: {
-    textAlign: "left",
+  monthText: {
+    textAlign: "center",
     marginTop: 10,
     width: " 100%",
+    letterSpacing: 5,
+    fontWeight: "500",
+    fontSize: 16,
+  },
+  weekCalContainer: {
+    alignContent: "center",
+    position: "absolute",
+    top: 120,
   },
 });
 

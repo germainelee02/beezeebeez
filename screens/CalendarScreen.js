@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,11 +7,13 @@ import {
   Dimensions,
   Modal,
 } from "react-native";
-import { Calendar, CalendarList, Agenda } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CalendarMonth from "../components/CalendarComponents/CalendarMonth";
-import AgendaScreen from "../components/CalendarComponents/AgendaScreen";
 import CreateEventModal from "../components/CalendarComponents/CreateEventModal";
+import Cal from "../components/CalendarComponents/Cal";
+import AgendaView from "../components/CalendarComponents/AgendaView";
+import moment from "moment";
+
 const { height, width } = Dimensions.get("window");
 
 const CalendarScreen = () => {
@@ -21,9 +23,14 @@ const CalendarScreen = () => {
     setIsModalVisible(bool);
   };
 
+  const [dateSelected, setDateSelected] = useState(moment());
+  const [loading, setLoading] = useState(false);
+
+  // useEffect(() => setDateSelected(Date()));
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <AgendaScreen />
+      <Cal updateData={(data) => setDateSelected(data)} />
+      <AgendaView date={dateSelected} />
       <View style={styles.createBtnContainer}>
         <TouchableOpacity
           style={styles.createBtn}
@@ -64,11 +71,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "absolute",
     bottom: 5,
+    shadow: {
+      shadowColor: "white",
+      shadowOffset: {
+        width: 5,
+        height: 5,
+      },
+      shadowOpacity: 0.8,
+      shadowRadius: 4.5,
+      elevation: 4,
+    },
   },
   createBtnContainer: {
     position: "absolute",
     top: height - 90,
-    left: width - 70,
+    left: width - 60,
   },
 });
 

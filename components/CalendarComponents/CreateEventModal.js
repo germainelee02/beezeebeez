@@ -29,6 +29,8 @@ import {
 import * as firebase from "firebase/app";
 import moment from "moment";
 import { toDate } from "date-fns";
+import Input from "./Input";
+import { useIsFocused } from "@react-navigation/native";
 
 const { height, width } = Dimensions.get("window");
 const { Timestamp } = require("firebase/firestore");
@@ -36,16 +38,21 @@ const { Timestamp } = require("firebase/firestore");
 const CreateEventModal = (props) => {
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
-  const [startDate, setStartDate] = useState(
-    moment().format("DD MMMM YYYY, h:mm A")
-  );
+  const [startDate, setStartDate] = useState(moment().format("DD MMMM YYYY"));
+  const [startTime, setStartTime] = useState(moment().format("h:mm A"));
   const [endDate, setEndDate] = useState("");
+  const [endTime, setEndTime] = useState(moment().format("h:mm A"));
+  const [isDataValid, setIsDataValid] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [itemId, setItemId] = useState("");
 
   const [events, setEvents] = useState([
     {
       title: "",
       startDate: "",
+      startTime: "",
       endDate: "",
+      endTime: "",
       notes: "",
     },
   ]);
@@ -57,19 +64,42 @@ const CreateEventModal = (props) => {
       {
         title: title,
         startDate: startDate,
+        startTime: startTime,
         endDate: endDate,
+        endTime: endTime,
         notes: notes,
       },
     ]);
   };
+  const convertTime12to24 = (time12h) => {
+    const [time, modifier] = time12h.split(" ");
+
+    let [hours, minutes] = time.split(":");
+
+    if (hours === "12") {
+      hours = "00";
+    }
+
+    if (modifier === "PM") {
+      hours = parseInt(hours, 10) + 12;
+    }
+
+    return `${hours}${minutes}`;
+  };
 
   const uploadEvent = async () => {
+    const startDateTime = startDate + " " + convertTime12to24(startTime);
+    const endDateTime = endDate + " " + convertTime12to24(endTime);
     const docRef = await addDoc(
       collection(db, "events: " + authentication.currentUser.uid),
       {
         title: title,
         startDate: startDate,
+        startTime: startTime,
+        startDateTime: startDateTime,
+        endTime: endTime,
         endDate: endDate,
+        endDateTime: endDateTime,
         notes: notes,
       }
     );
@@ -87,6 +117,50 @@ const CreateEventModal = (props) => {
     setNotes("");
     setStartDate("");
     setEndDate("");
+    setStartTime("");
+    setEndTime("");
+  };
+
+  const handleError = (error, input) => {
+    setErrors((prevState) => ({ ...prevState, [input]: error }));
+  };
+
+  const isFocused = useIsFocused();
+
+  const validate = () => {
+    let isValid = true;
+    if (!title) {
+      handleError("Please enter your event title", "title");
+      isValid = false;
+      setIsDataValid(false);
+    }
+    if (!(endDate >= startDate)) {
+      // end date is before start date,
+      handleError("Please enter a valid date", "endDate");
+      isValid = false;
+      setIsDataValid(false);
+    } else {
+      if (!(endTime > startTime)) {
+        handleError("Please enter a valid time", "endDate");
+        isValid = false;
+        setIsDataValid(false);
+      }
+    }
+
+    if (notes.length > 300) {
+      handleError("You cannot exceed 300 characters", "notes");
+      isValid = false;
+      setIsDataValid(false);
+    }
+    if (isValid) {
+      handleError(null, "endDate");
+      handleError(null, "title");
+      handleError(null, "notes");
+      setIsDataValid(true);
+      uploadEvent();
+      closeEvent(false);
+      clearInputs();
+    }
   };
 
   return (
@@ -102,38 +176,46 @@ const CreateEventModal = (props) => {
             <Text style={styles.bigHeader}>New Event</Text>
           </View>
 
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerStyle}>Title:</Text>
-            <TextInput
-              style={styles.genereicContainer}
+          <View
+            style={{
+              marginTop: 10,
+              flex: 1,
+              alignContent: "center",
+            }}
+          >
+            <Input
+              label={"Title:"}
               value={title}
               onChangeText={(text) => setTitle(text)}
               selectionColor={"#ffba09"}
+              onFocus={() => handleError(null, "title")}
+              error={errors.title}
             />
-          </View>
+            <View style={styles.genericContainer}>
+              <Text style={styles.headerStyle}>Start Date & Time:</Text>
+              <ModalDatePicker
+                updateDate={(val) => setStartDate(val)}
+                updateTime={(time) => setStartTime(time)}
+              />
+            </View>
 
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerStyle}>Start Date & Time:</Text>
-          </View>
-          <ModalDatePicker updateData={(val) => setStartDate(val)} />
+            <View style={styles.genericContainer}>
+              <Text style={styles.headerStyle}>End Date & Time:</Text>
+              <ModalDatePicker
+                updateDate={(val) => setEndDate(val)}
+                updateTime={(time) => setEndTime(time)}
+                error={errors.endDate}
+              />
+            </View>
 
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerStyle}>End Date & Time:</Text>
-          </View>
-          <ModalDatePicker updateData={(val) => setEndDate(val)} />
-
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerStyle}>Notes:</Text>
-            <Text style={{ marginBottom: 5, color: "gray" }}>
-              (max of 300 characters)
-            </Text>
-            <TextInput
-              style={[styles.notesContainer]}
+            <Input
+              label={"Notes:"}
               value={notes}
               onChangeText={(text) => setNotes(text)}
+              onFocus={() => handleError(null, "notes")}
+              error={errors.notes}
               selectionColor={"#ffba09"}
               multiline={true}
-              maxLength={300}
             />
           </View>
           <View style={styles.createBtnContainer}>
@@ -141,9 +223,7 @@ const CreateEventModal = (props) => {
               style={styles.createBtn}
               onPress={() => {
                 handleAddEvent();
-                closeEvent(false);
-                uploadEvent();
-                clearInputs();
+                validate();
               }}
             >
               <Text style={styles.tick}>✓</Text>
@@ -177,22 +257,6 @@ const styles = StyleSheet.create({
     top: 50,
     marginLeft: width - 60,
   },
-  genereicContainer: {
-    paddingVertical: 15,
-    borderColor: "gray",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  notesContainer: {
-    borderColor: "gray",
-    paddingVertical: 15,
-    borderColor: "gray",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    paddingTop: 10,
-  },
   tick: {
     fontSize: 20,
     color: "white",
@@ -203,7 +267,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   headerContainer: {
-    marginTop: 15,
+    marginTop: 0,
+    marginBottom: 5,
+  },
+  genericContainer: {
+    height: 100,
   },
   createBtnContainer: {
     bottom: 20,

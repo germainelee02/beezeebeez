@@ -13,7 +13,7 @@ const LoadingScreen = (props) => {
     setTimeout(() => {
       closeLoadingScreen(false);
     }, 3000);
-  });
+  }, []);
 
   return (
     <View
