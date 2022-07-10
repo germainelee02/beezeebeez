@@ -38,6 +38,11 @@ const AppNavigator = () => {
           component={Screens.MoodTrackerScreen}
           options={{ headerShown: true }} // temporary header... later on remove the header!!
         />
+        <Stack.Screen
+          name="monthly mood"
+          component={Screens.MonthlyMood}
+          options={{ headerShown: true, title: "Monthly Mood" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

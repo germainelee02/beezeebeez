@@ -8,6 +8,8 @@ import SignUpScreen from "./SignUpScreen";
 import MonthlyExpenseScreen from "./MonthlyExpenseScreen";
 import ProfileScreen from "./ProfileScreen";
 import MoodTrackerScreen from "./MoodTrackerScreen";
+import MonthlyMood from "./MonthlyMood";
+
 export {
   LoginScreen,
   SignUpScreen,
@@ -19,4 +21,5 @@ export {
   MonthlyExpenseScreen,
   ProfileScreen,
   MoodTrackerScreen,
+  MonthlyMood,
 };

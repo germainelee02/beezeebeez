@@ -21,7 +21,7 @@ import {
 import PopUpModal from "../components/MoodComponents/PopUpModal";
 import ReasonModal from "../components/MoodComponents/ReasonModal";
 
-const MoodTrackerScreen = () => {
+const MoodTrackerScreen = ({ navigation }) => {
   const happyColour = "lemonchiffon";
 
   const sadColour = "powderblue";
@@ -42,7 +42,7 @@ const MoodTrackerScreen = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const [day, setDay] = useState("");
+  const [day, setDay] = useState({});
 
   const [colour, setColour] = useState("");
 
@@ -55,6 +55,7 @@ const MoodTrackerScreen = () => {
 
   useEffect(() => {
     getData();
+    console.log("mood tracker re-rendered");
   }, [refresh]);
 
   const closeModal = () => {
@@ -103,22 +104,28 @@ const MoodTrackerScreen = () => {
     const moodRef = doc(
       db,
       "mood tracker: " + authentication.currentUser.uid,
-      day
+      day.dateString
     );
-    setDoc(moodRef, { day: day, colour: colour, reason: reason });
+    setDoc(moodRef, {
+      day: day.dateString,
+      colour: colour,
+      reason: reason,
+      month: day.month.toString(),
+      year: day.year.toString(),
+    });
     refreshPage();
     setRevisible(false);
   };
 
-  const checkAndAdd = async (dayStr) => {
+  const checkAndAdd = async (day) => {
     const docRef = doc(
       db,
       "mood tracker: " + authentication.currentUser.uid,
-      dayStr
+      day.dateString
     );
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
-      return moodAlert(dayStr);
+      return moodAlert(day);
     } else {
       Alert.alert("Mood already selected", "Want to change your mood?", [
         {
@@ -130,13 +137,13 @@ const MoodTrackerScreen = () => {
         },
         {
           text: "Yes",
-          onPress: () => moodAlert(dayStr),
+          onPress: () => moodAlert(day),
         },
       ]);
     }
   };
-  const moodAlert = (dayStr) => {
-    setDay(dayStr);
+  const moodAlert = (day) => {
+    setDay(day);
     setVisible(true);
   };
 
@@ -148,8 +155,24 @@ const MoodTrackerScreen = () => {
         backgroundColor: "white",
       }}
     >
-      <View style={{ paddingTop: 100, paddingLeft: 10 }}>
+      <View
+        style={{
+          paddingTop: 40,
+          paddingBottom: 10,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
         <Text style={styles.titleText}>See your mood in colours!</Text>
+        <TouchableOpacity
+          style={styles.monthButton}
+          onPress={() => navigation.navigate("monthly mood")}
+        >
+          <Text style={{ maxWidth: "80%", textAlign: "center" }}>
+            View by month
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.container}>
@@ -161,7 +184,6 @@ const MoodTrackerScreen = () => {
           surpriseColour={surpriseColour}
           disgustColour={disgustColour}
           fearColour={fearColour}
-          // addMarkedDays={addMarkedDays}
           openReasonModal={openReasonModal}
           closeModal={closeModal}
           day={day}
@@ -171,10 +193,7 @@ const MoodTrackerScreen = () => {
           addMarkedDays={addMarkedDays}
           closeReModal={closeReModal}
         />
-        <TouchableOpacity
-          onPress={() => refreshPage()}
-          style={{ marginBottom: 50 }}
-        ></TouchableOpacity>
+
         {loading ? (
           <ActivityIndicator />
         ) : (
@@ -182,7 +201,7 @@ const MoodTrackerScreen = () => {
             <CalendarList
               markingType={"period"}
               markedDates={markedDays}
-              onDayPress={(day) => checkAndAdd(day.dateString)}
+              onDayPress={(day) => checkAndAdd(day)}
               onDayLongPress={(day) =>
                 Alert.alert("Reason", reasonDays[day.dateString].reason)
               }
@@ -207,6 +226,15 @@ const styles = StyleSheet.create({
     letterSpacing: -2,
     textAlign: "left",
     lineHeight: 40,
+    maxWidth: "75%",
+  },
+  monthButton: {
+    backgroundColor: "rgb(251, 194, 8)",
+    width: 80,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 50,
   },
 });
 
