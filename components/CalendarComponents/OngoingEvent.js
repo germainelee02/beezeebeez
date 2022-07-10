@@ -1,45 +1,59 @@
 import { View, Text, StyleSheet, Dimensions, Modal } from "react-native";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import moment from "moment";
 import EventModal from "./EventModal";
+import moment from "moment";
 const { height, width } = Dimensions.get("window");
 
-const Event = ({
+const OngoingEvent = ({
   title,
   startTime,
   endTime,
   notes,
   endDate,
   startDate,
-  id,
+  key,
+  item,
 }) => {
-  const notesDisplay =
-    notes.length > 30 ? notes.substring(0, 30) + "....." : notes;
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const changeModalVisible = (bool) => {
     setIsModalVisible(bool);
   };
+
+  const [isOneDay, setIsOneDay] = useState(true);
+
+  useEffect(() => {
+    const end = moment(endDate);
+    const start = moment(startDate).format("YYYYMMDD");
+    const diff = end.diff(start, "days");
+    if (diff > 0) {
+      setIsOneDay(false);
+    }
+  }, []);
+
+  const timeText = isOneDay
+    ? `${startTime} - ${endTime}`
+    : startDate == moment().format("DD MMMM YYYY")
+    ? `${startTime} - ${endDate}, ${endTime}`
+    : `${startDate}, ${startTime} - ${endDate}, ${endTime}`;
 
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() => changeModalVisible(true)}
     >
-      <View style={styles.timeContainer}>
-        <Text style={styles.startTime}>{startTime}</Text>
-      </View>
-
-      <View style={styles.rightContainer}>
+      <View style={styles.textContainer}>
+        <Text style={styles.time}>{timeText}</Text>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.notes}>{notesDisplay}</Text>
+        {notes ? (
+          <Text style={styles.notes}>
+            {notes.length > 30 ? notes.substring(0, 30) + "....." : notes}{" "}
+          </Text>
+        ) : (
+          <Text></Text>
+        )}
       </View>
-      <Modal
-        visible={isModalVisible}
-        // presentationStyle={"overFullScreen"}
-        transparent={true}
-      >
+      <Modal visible={isModalVisible} transparent={true}>
         <EventModal
           changeModalVisible={changeModalVisible}
           title={title}
@@ -48,7 +62,8 @@ const Event = ({
           endTime={endTime}
           startDate={startDate}
           endDate={endDate}
-          id={id}
+          key={key}
+          item={item}
         />
       </Modal>
     </TouchableOpacity>
@@ -58,8 +73,8 @@ const Event = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#f5e8bb",
-    width: width - 40,
-    height: 70,
+    width: width - 50,
+    height: 80,
     marginBottom: 15,
     justifyContent: "center",
     // paddingLeft: 18,
@@ -67,6 +82,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     flexDirection: "row",
     alignItems: "center",
+    alignSelf: "center",
   },
   title: {
     fontWeight: "600",
@@ -74,6 +90,10 @@ const styles = StyleSheet.create({
   },
   notes: {
     color: "grey",
+  },
+  time: {
+    fontSize: 12,
+    paddingBottom: 5,
   },
   startTime: {
     fontSize: 13,
@@ -83,14 +103,15 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "grey",
   },
-  rightContainer: {
-    paddingTop: 10,
+  textContainer: {
     flex: 1,
-    marginLeft: 15,
+    paddingLeft: 20,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
   timeContainer: {
     justifyContent: "center",
-    width: 40,
+    width: 45,
     height: 50,
     alignContent: "center",
     marginLeft: 15,
@@ -98,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Event;
+export default OngoingEvent;

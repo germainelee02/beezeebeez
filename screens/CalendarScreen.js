@@ -23,13 +23,18 @@ const CalendarScreen = () => {
     setIsModalVisible(bool);
   };
 
-  const [dateSelected, setDateSelected] = useState(moment());
+  const [dateSelected, setDateSelected] = useState(
+    moment().format("DD MMMM YYYY")
+  );
   const [loading, setLoading] = useState(false);
 
   // useEffect(() => setDateSelected(Date()));
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <Cal updateData={(data) => setDateSelected(data)} />
+      <View style={{ marginBottom: 5 }}>
+        <Cal updateData={(data) => setDateSelected(data)} />
+      </View>
+
       <AgendaView date={dateSelected} />
       <View style={styles.createBtnContainer}>
         <TouchableOpacity

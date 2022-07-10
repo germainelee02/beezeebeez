@@ -10,43 +10,67 @@ import {
   where,
   doc,
   getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { db, authentication } from "../../firebase/firebase-config";
 import moment from "moment";
+import { da } from "date-fns/locale";
 const { height, width } = Dimensions.get("window");
 
 const Cal = (props) => {
   const changeSelectedDate = (date) => {
     props.updateData(date);
+    setSelectedDate(date);
   };
 
+  const [selectedDate, setSelectedDate] = useState(
+    moment().format("DD MMMM YYYY")
+  );
   const [markedDates, setMarkedDates] = useState({});
 
   useEffect(() => {
+    // gets data to mark dates on the calendar
     const getData = async () => {
       const eventsCol = query(
         collection(db, "events: " + authentication.currentUser.uid)
       );
-      const eventsSnashot = await getDocs(eventsCol);
-      const tempArray = {};
-      eventsSnashot.forEach((doc) => {
-        const { startDate } = doc.data();
-        const date = moment(new Date(startDate)).format("YYYY-MM-DD");
-        tempArray[date] = {
-          marked: true,
-        };
+
+      onSnapshot(eventsCol, (snapshot) => {
+        const tempArray = {};
+        snapshot.docs.forEach((doc) => {
+          const { startDate, endDate } = doc.data();
+          const sdate = moment(startDate).format("YYYY-MM-DD");
+          const edate = moment(endDate).format("YYYY-MM-DD");
+          // if (edate != sdate) {
+          //   tempArray[sdate] = {
+          //     startingDay: true,
+          //     color: "lightblue",
+          //   };
+          //   tempArray[edate] = {
+          //     endingDay: true,
+          //     color: "lightblue",
+          //   };
+          // } else {
+          tempArray[sdate] = {
+            marked: true,
+          };
+          tempArray[edate] = {
+            marked: true,
+          };
+          // }
+        });
+        setMarkedDates(tempArray);
       });
-      setMarkedDates(tempArray);
     };
     getData();
-  }, []);
+  }, [selectedDate]);
 
   return (
     <View style={{ marginTop: 10, height: 320, marginBottom: 15 }}>
       <Calendar
         calendarWidth={width}
         markedDates={markedDates}
-        markingType={"dot"}
+        markingType={"period"}
         onDayPress={(day) => changeSelectedDate(day.dateString)}
         enableSwipeMonths={true}
         style={{

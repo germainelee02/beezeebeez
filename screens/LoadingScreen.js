@@ -10,9 +10,13 @@ const LoadingScreen = (props) => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      closeLoadingScreen(false);
-    }, 3000);
+    {
+      props.timeout
+        ? setTimeout(() => {
+            closeLoadingScreen(false);
+          }, 2000)
+        : {};
+    }
   }, []);
 
   return (

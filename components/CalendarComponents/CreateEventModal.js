@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TextInput,
+  Modal,
 } from "react-native";
 import React, { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -31,6 +32,7 @@ import moment from "moment";
 import { toDate } from "date-fns";
 import Input from "./Input";
 import { useIsFocused } from "@react-navigation/native";
+import LoadingScreen from "../../screens/LoadingScreen";
 
 const { height, width } = Dimensions.get("window");
 const { Timestamp } = require("firebase/firestore");
@@ -58,7 +60,6 @@ const CreateEventModal = (props) => {
   ]);
 
   const handleAddEvent = () => {
-    console.log(startDate);
     setEvents([
       ...events,
       {
@@ -82,6 +83,8 @@ const CreateEventModal = (props) => {
 
     if (modifier === "PM") {
       hours = parseInt(hours, 10) + 12;
+    } else {
+      hours = "0" + hours;
     }
 
     return `${hours}${minutes}`;
@@ -120,6 +123,11 @@ const CreateEventModal = (props) => {
     setStartTime("");
     setEndTime("");
   };
+  // to open loading screen
+  const [isLoadingScreenOpen, setIsLoadingScreenOpen] = useState(false);
+  const changeLoadingVisible = (bool) => {
+    setIsLoadingScreenOpen(bool);
+  };
 
   const handleError = (error, input) => {
     setErrors((prevState) => ({ ...prevState, [input]: error }));
@@ -140,14 +148,17 @@ const CreateEventModal = (props) => {
       isValid = false;
       setIsDataValid(false);
     } else {
-      if (!(endTime > startTime)) {
+      if (
+        startDate == endDate &&
+        !(convertTime12to24(endTime) > convertTime12to24(startTime))
+      ) {
         handleError("Please enter a valid time", "endDate");
         isValid = false;
         setIsDataValid(false);
       }
     }
 
-    if (notes.length > 300) {
+    if (notes && notes.length > 300) {
       handleError("You cannot exceed 300 characters", "notes");
       isValid = false;
       setIsDataValid(false);
@@ -158,6 +169,7 @@ const CreateEventModal = (props) => {
       handleError(null, "notes");
       setIsDataValid(true);
       uploadEvent();
+      setIsLoadingScreenOpen(true);
       closeEvent(false);
       clearInputs();
     }
@@ -229,6 +241,9 @@ const CreateEventModal = (props) => {
               <Text style={styles.tick}>✓</Text>
             </TouchableOpacity>
           </View>
+          <Modal visible={isLoadingScreenOpen}>
+            <LoadingScreen changeLoadingVisible={changeLoadingVisible} />
+          </Modal>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAwareScrollView>

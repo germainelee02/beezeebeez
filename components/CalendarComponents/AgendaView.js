@@ -5,11 +5,11 @@ import {
   StyleSheet,
   ActivityIndicator,
   FlatList,
+  Modal,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import moment from "moment";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
   addDoc,
   collection,
@@ -19,27 +19,34 @@ import {
   where,
   doc,
   getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { db, authentication } from "../../firebase/firebase-config";
-import Event from "./Event";
-import { he } from "date-fns/locale";
-
+import OngoingEvent from "./OngoingEvent";
+import UpcomingEvent from "./UpcomingEvent";
+import PastEvent from "./PastEvent";
+import { useIsFocused } from "@react-navigation/native";
+import LoadingScreen from "../../screens/LoadingScreen";
 const { height, width } = Dimensions.get("window");
 
 const AgendaView = (props) => {
-  const date = moment(props.date);
+  const dateNow = moment().format("DD MMMM YYYY");
+  const dateSelected = moment(props.date).format("DD MMMM YYYY");
   const dayNum = moment(props.date).format("DD");
-  const month = date.format("MMMM");
-  const title =
-    date.format("DD-MMMM-YYYY") === moment().format("DD-MMMM-YYYY")
-      ? "Today's Agenda"
-      : "Agenda";
 
-  const [events, setEvents] = useState([]);
+  const title = dateSelected === dateNow ? "Today's Agenda" : "Agenda";
+
   const [ongoingEvents, setOngoingEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [pastEvents, setPastEvents] = useState([]);
+
+  const [isLoadingScreenOpen, setIsLoadingScreenOpen] = useState(false);
+  const changeLoadingVisible = (bool) => {
+    setIsLoadingScreenOpen(bool);
+  };
 
   const [loading, setLoading] = useState(false);
+  const isFocused = useIsFocused();
 
   const convertTime12to24 = (time12h) => {
     const [time, modifier] = time12h.split(" ");
@@ -52,6 +59,8 @@ const AgendaView = (props) => {
 
     if (modifier === "PM") {
       hours = parseInt(hours, 10) + 12;
+    } else {
+      hours = "0" + hours;
     }
 
     return `${hours}${minutes}`;
@@ -59,38 +68,78 @@ const AgendaView = (props) => {
 
   useEffect(() => {
     setLoading(true);
+    // setIsLoadingScreenOpen(true);
     const getData = async () => {
       const eventsCol = query(
         collection(db, "events: " + authentication.currentUser.uid),
-        // where("startDate", "==", date.format("DD MMMM YYYY")),
-        orderBy("startTime")
+        orderBy("startDateTime")
       );
-      const eventsSnashot = await getDocs(eventsCol);
-      const tempOngoingArray = [];
-      const tempUpcomingArray = [];
-      eventsSnashot.forEach((doc) => {
-        if (
-          doc.data().startDate <= date.format("DD MMMM YYYY") &&
-          convertTime12to24(doc.data()).startTime <=
-            convertTime12to24(moment("h:mm A")) &&
-          doc.data().endDateTime >= moment("DD MMMM YYYY") &&
-          convertTime12to24(doc.data()).endTime >=
-            convertTime12to24(moment("h:mm A"))
-        ) {
-          tempOngoingArray.push(doc.data());
-        }
-        if (doc.data().startDate == date.format("DD MMMM YYYY")) {
-          tempUpcomingArray.push(doc.data());
-        }
+
+      onSnapshot(eventsCol, (snapshot) => {
+        let tempOngoing = [];
+        let tempUpcoming = [];
+        let tempPast = [];
+
+        snapshot.docs.forEach((doc) => {
+          const docStartTime = convertTime12to24(doc.data().startTime);
+          const docEndTime = convertTime12to24(doc.data().endTime);
+          const docStartDate = doc.data().startDate;
+          const docEndDate = doc.data().endDate;
+
+          if (docStartDate === dateSelected) {
+            if (docStartDate < dateNow) {
+              tempPast.push(doc.data());
+            } else if (docStartDate > dateNow) {
+              tempUpcoming.push(doc.data());
+            } else if (docStartDate === dateNow) {
+              if (docEndDate > dateSelected && dateSelected === dateNow) {
+                tempOngoing.push(doc.data());
+              } else if (
+                docEndTime < convertTime12to24(moment().format("h:mm A"))
+              ) {
+                tempPast.push(doc.data());
+              } else if (
+                docStartTime > convertTime12to24(moment().format("h:mm A"))
+              ) {
+                tempUpcoming.push(doc.data());
+              } else if (
+                docStartTime <= convertTime12to24(moment().format("h:mm A")) &&
+                docEndTime > convertTime12to24(moment().format("h:mm A")) &&
+                dateSelected === dateNow
+              ) {
+                tempOngoing.push(doc.data());
+              }
+            }
+          } else if (
+            docStartDate < dateSelected &&
+            docEndDate > dateSelected &&
+            dateSelected === dateNow
+          ) {
+            tempOngoing.push(doc.data());
+          } else if (
+            docEndDate == dateSelected &&
+            docStartDate < dateSelected &&
+            dateSelected === dateNow
+          ) {
+            tempOngoing.push(doc.data());
+          } else if (docEndDate === dateSelected) {
+            tempUpcoming.push(doc.data());
+          } else if (
+            docStartDate < dateSelected &&
+            docEndDate > dateSelected &&
+            dateSelected > dateNow
+          ) {
+            tempUpcoming.push(doc.data());
+          }
+        });
+        setOngoingEvents(tempOngoing);
+        setUpcomingEvents(tempUpcoming);
+        setPastEvents(tempPast);
       });
-      setOngoingEvents(tempOngoingArray);
-      setUpcomingEvents(tempUpcomingArray);
-      () => console.log(ongoingEvents);
-      () => console.log(upcomingEvents);
     };
     getData();
     setLoading(false);
-  }, []);
+  }, [dateSelected, isFocused]);
 
   return (
     <View
@@ -106,88 +155,158 @@ const AgendaView = (props) => {
           <ActivityIndicator size={large} />
         </View>
       ) : (
-        <View>
-          <Text style={styles.selectedDate}>
-            {title}: {date.format("D MMMM YYYY")}
-          </Text>
-          {events ? (
-            <View>
-              <Text style={styles.onGoing}>Ongoing</Text>
-              <FlatList
-                contentContainerStyle={{
-                  alignItems: "center",
-                  height: events.length * 130,
-                }}
-                data={ongoingEvents}
-                showsVerticalScrollIndicator={true}
-                keyExtractor={(event) => events.indexOf(event)}
-                renderItem={({ item, index }) => {
-                  return (
-                    <Event
-                      title={item.title}
-                      notes={item.notes}
-                      startTime={item.startTime}
-                      startDate={item.startDate}
-                      endTime={item.endTime}
-                      endDate={item.endDate}
-                      id={item.id}
-                    />
-                  );
-                }}
-              ></FlatList>
-              <Text style={styles.onGoing}>Upcoming</Text>
-              <FlatList
-                contentContainerStyle={{
-                  alignItems: "center",
-                  height: events.length * 130,
-                }}
-                data={upcomingEvents}
-                showsVerticalScrollIndicator={true}
-                keyExtractor={(event) => events.indexOf(event)}
-                renderItem={({ item, index }) => {
-                  return (
-                    <Event
-                      title={item.title}
-                      notes={item.notes}
-                      startTime={item.startTime}
-                      startDate={item.startDate}
-                      endTime={item.endTime}
-                      endDate={item.endDate}
-                      id={item.id}
-                    />
-                  );
-                }}
-              ></FlatList>
+        <View style={{ alignItems: "center" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              height: 50,
+              alignContent: "center",
+              width: width - 40,
+            }}
+          >
+            <View style={styles.dateNumContainer}>
+              <Text style={{ fontSize: 23, fontWeight: "bold" }}>{dayNum}</Text>
+              <Text style={{ lineHeight: 13 }}>
+                {moment(props.date).format("ddd")}
+              </Text>
             </View>
-          ) : (
             <View
               style={{
-                backgroundColor: "gray",
-                height: height,
-                width: 400,
-                flex: 1,
+                marginLeft: 10,
+                width: 200,
+
+                justifyContent: "center",
               }}
             >
-              <Event title={"You have no events today"} />
+              <Text style={styles.title}>{title}</Text>
             </View>
-          )}
+          </View>
+
+          <View style={{ height: 320 }}>
+            <ScrollView
+              contentContainerStyle={{
+                width: width - 30,
+                paddingBottom: 100,
+              }}
+            >
+              {ongoingEvents.length != 0 ? (
+                <Text style={styles.onGoing}>Ongoing</Text>
+              ) : (
+                <Text></Text>
+              )}
+              {ongoingEvents.map((item) => {
+                return (
+                  <OngoingEvent
+                    item={item}
+                    title={item.title}
+                    notes={item.notes}
+                    startTime={item.startTime}
+                    startDate={item.startDate}
+                    endTime={item.endTime}
+                    endDate={item.endDate}
+                    key={item.id}
+                  />
+                );
+              })}
+
+              {dateSelected >= dateNow ? (
+                <Text style={styles.onGoing}>Upcoming</Text>
+              ) : (
+                <View></View>
+              )}
+              {upcomingEvents.length != 0 ? (
+                upcomingEvents.map((item) => {
+                  return (
+                    <UpcomingEvent
+                      item={item}
+                      title={item.title}
+                      notes={item.notes}
+                      startTime={item.startTime}
+                      startDate={item.startDate}
+                      endTime={item.endTime}
+                      endDate={item.endDate}
+                      key={item.id}
+                    />
+                  );
+                })
+              ) : dateSelected >= dateNow ? (
+                <Text
+                  style={{
+                    marginBottom: 20,
+                    marginLeft: 10,
+                    fontStyle: "italic",
+                  }}
+                >
+                  You have no upcoming events
+                </Text>
+              ) : (
+                <View></View>
+              )}
+
+              {dateSelected <= dateNow ? (
+                <Text style={styles.onGoing}>Past</Text>
+              ) : (
+                <View></View>
+              )}
+              {pastEvents.length != 0 ? (
+                pastEvents.map((item) => {
+                  return (
+                    <PastEvent
+                      item={item}
+                      title={item.title}
+                      notes={item.notes}
+                      startTime={item.startTime}
+                      startDate={item.startDate}
+                      endTime={item.endTime}
+                      endDate={item.endDate}
+                      key={item.id}
+                    />
+                  );
+                })
+              ) : dateSelected <= dateNow && pastEvents.length == 0 ? (
+                <Text
+                  style={{
+                    marginBottom: 20,
+                    marginLeft: 10,
+                    fontStyle: "italic",
+                  }}
+                >
+                  You have no past events
+                </Text>
+              ) : (
+                <View></View>
+              )}
+            </ScrollView>
+          </View>
+          <Modal visible={isLoadingScreenOpen}>
+            <LoadingScreen
+              changeLoadingVisible={changeLoadingVisible}
+              timeout={false}
+            />
+          </Modal>
         </View>
       )}
     </View>
   );
 };
 const styles = StyleSheet.create({
-  selectedDate: {
-    fontSize: 20,
+  title: {
+    fontSize: 18,
     letterSpacing: -1,
     fontWeight: "bold",
     marginBottom: 15,
-    marginLeft: 20,
   },
   onGoing: {
     fontWeight: "500",
-    marginLeft: 20,
+    color: "gray",
     marginBottom: 10,
+    marginLeft: 5,
+  },
+  dateNumContainer: {
+    height: 40,
+    width: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 export default AgendaView;
