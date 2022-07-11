@@ -22,9 +22,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db, authentication } from "../../firebase/firebase-config";
-import OngoingEvent from "./OngoingEvent";
-import UpcomingEvent from "./UpcomingEvent";
-import PastEvent from "./PastEvent";
+import * as Events from "./events/index";
 import { useIsFocused } from "@react-navigation/native";
 import LoadingScreen from "../../screens/LoadingScreen";
 const { height, width } = Dimensions.get("window");
@@ -194,19 +192,8 @@ const AgendaView = (props) => {
               ) : (
                 <Text></Text>
               )}
-              {ongoingEvents.map((item) => {
-                return (
-                  <OngoingEvent
-                    item={item}
-                    title={item.title}
-                    notes={item.notes}
-                    startTime={item.startTime}
-                    startDate={item.startDate}
-                    endTime={item.endTime}
-                    endDate={item.endDate}
-                    key={item.id}
-                  />
-                );
+              {ongoingEvents.map((item, index) => {
+                return <Events.OngoingEvent item={item} key={index} />;
               })}
 
               {dateSelected >= dateNow ? (
@@ -215,19 +202,8 @@ const AgendaView = (props) => {
                 <View></View>
               )}
               {upcomingEvents.length != 0 ? (
-                upcomingEvents.map((item) => {
-                  return (
-                    <UpcomingEvent
-                      item={item}
-                      title={item.title}
-                      notes={item.notes}
-                      startTime={item.startTime}
-                      startDate={item.startDate}
-                      endTime={item.endTime}
-                      endDate={item.endDate}
-                      key={item.id}
-                    />
-                  );
+                upcomingEvents.map((item, index) => {
+                  return <Events.UpcomingEvent item={item} key={index} />;
                 })
               ) : dateSelected >= dateNow ? (
                 <Text
@@ -249,19 +225,8 @@ const AgendaView = (props) => {
                 <View></View>
               )}
               {pastEvents.length != 0 ? (
-                pastEvents.map((item) => {
-                  return (
-                    <PastEvent
-                      item={item}
-                      title={item.title}
-                      notes={item.notes}
-                      startTime={item.startTime}
-                      startDate={item.startDate}
-                      endTime={item.endTime}
-                      endDate={item.endDate}
-                      key={item.id}
-                    />
-                  );
+                pastEvents.map((item, index) => {
+                  return <Events.PastEvent item={item} key={index} />;
                 })
               ) : dateSelected <= dateNow && pastEvents.length == 0 ? (
                 <Text

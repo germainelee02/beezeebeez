@@ -14,7 +14,7 @@ import { ScrollView, TextInput } from "react-native-gesture-handler";
 const Input = ({ label, imgSource, error, onFocus = () => {}, ...props }) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
-    <View style={{ height: 90 }}>
+    <View style={{ height: 95 }}>
       <View
         style={{
           marginBottom: 20,
@@ -51,7 +51,7 @@ const Input = ({ label, imgSource, error, onFocus = () => {}, ...props }) => {
                 setIsFocused(true);
               }}
               onBlur={() => setIsFocused(false)}
-              selectionColor={"#f5e8bb"}
+              selectionColor={"#feba07"}
               style={styles.inputText}
               {...props}
             />

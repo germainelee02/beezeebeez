@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import * as Screens from "../../screens/index";
 import HomeDrawer from "./HomeDrawer";
 import CreateEventButton from "../CalendarComponents/CreateEventButton";
+import { Octicons } from "@expo/vector-icons";
+
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -15,12 +17,12 @@ const TabNavigator = () => {
         tabBarShowLabel: false,
 
         tabBarStyle: {
-          height: 60,
+          height: 50,
           borderRadius: 25,
           position: "absolute",
           left: 20,
           right: 20,
-          bottom: 20,
+          bottom: 25,
           backgroundColor: "white",
           ...styles.shadow,
         },
@@ -37,21 +39,12 @@ const TabNavigator = () => {
                 justifyContent: "center",
                 top: 15,
                 backgroundColor: focused ? "#f6e6bb" : "white",
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 borderRadius: 20,
               }}
             >
-              <Image
-                source={require("../../assets/icons/tabBarIcons/cal.png")}
-                resizeMode="contain"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: "gray",
-                  // tintColor: focused ? "#f5e9bc" : "gray",
-                }}
-              />
+              <Octicons name="calendar" size={18} color={"grey"} />
             </View>
           ),
         }}
@@ -68,22 +61,12 @@ const TabNavigator = () => {
                 justifyContent: "center",
                 top: 15,
                 backgroundColor: focused ? "#f6e6bb" : "white",
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 borderRadius: 20,
               }}
             >
-              <Image
-                source={require("../../assets/icons/tabBarIcons/todo.png")}
-                resizeMode="contain"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: "gray",
-
-                  // tintColor: focused ? "#f5e9bc" : "gray",
-                }}
-              />
+              <Octicons name="check-circle" size={18} color={"grey"} />
             </View>
           ),
         }}
@@ -104,23 +87,13 @@ const TabNavigator = () => {
                 borderRadius: 20,
               }}
             >
-              <Image
-                source={require("../../assets/icons/tabBarIcons/home.png")}
-                resizeMode="contain"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: "gray",
-
-                  // tintColor: focused ? "#f5e9bc" : "gray",
-                }}
-              />
+              <Octicons name="home" size={18} color={"grey"} />
             </View>
           ),
         }}
       />
       <Tab.Screen
-        name="ExpenseTracker"
+        name="Trackers"
         component={Screens.ExpenseTrackerScreen}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -130,22 +103,12 @@ const TabNavigator = () => {
                 justifyContent: "center",
                 top: 15,
                 backgroundColor: focused ? "#f6e6bb" : "white",
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 borderRadius: 20,
               }}
             >
-              <Image
-                source={require("../../assets/icons/tabBarIcons/expense.png")}
-                resizeMode="contain"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: "gray",
-
-                  // tintColor: focused ? "#f5e9bc" : "gray",
-                }}
-              />
+              <Octicons name="pulse" size={18} color="grey" />
             </View>
           ),
         }}
@@ -162,21 +125,12 @@ const TabNavigator = () => {
                 justifyContent: "center",
                 top: 15,
                 backgroundColor: focused ? "#f6e6bb" : "white",
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 borderRadius: 20,
               }}
             >
-              <Image
-                source={require("../../assets/icons/tabBarIcons/friends.png")}
-                resizeMode="contain"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: "gray",
-                  // tintColor: focused ? "#f5e9bc" : "gray",
-                }}
-              />
+              <Octicons name="people" size={18} color={"grey"} />
             </View>
           ),
         }}

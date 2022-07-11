@@ -6,6 +6,7 @@ import { authentication, db } from "../../firebase/firebase-config";
 
 const EventModal = (props) => {
   const id = props.item.id;
+
   const closeEvent = (bool) => {
     props.changeModalVisible(bool);
   };

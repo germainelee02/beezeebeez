@@ -1,20 +1,19 @@
 import { View, Text, StyleSheet, Dimensions, Modal } from "react-native";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import EventModal from "./EventModal";
+import EventModal from "../../CalendarComponents/EventModal";
 import moment from "moment";
 const { height, width } = Dimensions.get("window");
 
-const OngoingEvent = ({
-  title,
-  startTime,
-  endTime,
-  notes,
-  endDate,
-  startDate,
-  key,
-  item,
-}) => {
+const OngoingEvent = ({ item }) => {
+  const title = item.title;
+  const startTime = item.startTime;
+  const startDate = item.startDate;
+  const endTime = item.endTime;
+  const endDate = item.endDate;
+  const notes = item.notes;
+  const key = item.id;
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const changeModalVisible = (bool) => {
     setIsModalVisible(bool);
@@ -77,8 +76,6 @@ const styles = StyleSheet.create({
     height: 80,
     marginBottom: 15,
     justifyContent: "center",
-    // paddingLeft: 18,
-    // paddingRight: 18,
     borderRadius: 25,
     flexDirection: "row",
     alignItems: "center",

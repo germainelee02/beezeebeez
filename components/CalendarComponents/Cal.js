@@ -14,7 +14,6 @@ import {
 } from "firebase/firestore";
 import { db, authentication } from "../../firebase/firebase-config";
 import moment from "moment";
-import { da } from "date-fns/locale";
 const { height, width } = Dimensions.get("window");
 
 const Cal = (props) => {
@@ -41,23 +40,24 @@ const Cal = (props) => {
           const { startDate, endDate } = doc.data();
           const sdate = moment(startDate).format("YYYY-MM-DD");
           const edate = moment(endDate).format("YYYY-MM-DD");
-          // if (edate != sdate) {
-          //   tempArray[sdate] = {
-          //     startingDay: true,
-          //     color: "lightblue",
+          // for (
+          //   let i = moment(sdate);
+          //   i <= moment(edate);
+          //   i = moment(new Date(i)).add(1, "days")
+          // ) {
+          //   i = moment(i).format("YYYY-MM-DD");
+          //   tempArray[i] = {
+          //     marked: true,
           //   };
-          //   tempArray[edate] = {
-          //     endingDay: true,
-          //     color: "lightblue",
-          //   };
-          // } else {
-          tempArray[sdate] = {
-            marked: true,
-          };
-          tempArray[edate] = {
-            marked: true,
-          };
           // }
+          let curr = startDate;
+          while (curr <= endDate) {
+            let fCurr = moment(new Date(curr)).format("YYYY-MM-DD");
+            tempArray[fCurr] = {
+              marked: true,
+            };
+            curr = moment(curr).add(1, "day").format("DD MMMM YYYY");
+          }
         });
         setMarkedDates(tempArray);
       });
