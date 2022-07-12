@@ -1,26 +1,28 @@
-import { View, Text, StyleSheet, Alert } from "react-native";
-import React from "react";
+import { View, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import React, { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { deleteDoc, doc } from "firebase/firestore";
 import { authentication, db } from "../../firebase/firebase-config";
 
 const EventModal = (props) => {
+  const id = props.item.id;
+
   const closeEvent = (bool) => {
     props.changeModalVisible(bool);
   };
 
+  const [done, setDone] = useState(true);
   const deleteEvent = async () => {
     try {
-      await deleteDoc(
-        db,
-        "events: " + authentication.currentUser.uid,
-        props.id
-      );
+      setDone(false);
+      await deleteDoc(doc(db, "events: " + authentication.currentUser.uid, id));
+      setDone(true);
     } catch (e) {
       console.log(e);
     }
     closeEvent(false);
   };
+
   const showAlert = () => {
     return Alert.alert(
       "Are you sure you want to delete this event?",
@@ -41,41 +43,47 @@ const EventModal = (props) => {
         backgroundColor: "rgba(0,0,0,0.3)",
       }}
     >
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{props.title}</Text>
-        </View>
+      {done ? (
+        <View style={styles.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{props.title}</Text>
+          </View>
 
-        <View style={styles.startContainer}>
-          <Text style={{ fontWeight: "500" }}>Starts: </Text>
-          <Text style={styles.startTime}>
-            {props.startDate}, {props.startTime}
-          </Text>
+          <View style={styles.startContainer}>
+            <Text style={{ fontWeight: "500" }}>Starts: </Text>
+            <Text style={styles.startTime}>
+              {props.startDate}, {props.startTime}
+            </Text>
+          </View>
+          <View style={styles.startContainer}>
+            <Text style={{ fontWeight: "500" }}>Ends: </Text>
+            <Text style={styles.startTime}>
+              {props.endDate}, {props.endTime}
+            </Text>
+          </View>
+          <View style={styles.startContainer}>
+            <Text style={styles.notes}>{props.notes}</Text>
+          </View>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              onPress={() => closeEvent(false)}
+              style={[styles.buttonContainer, { backgroundColor: "lightgrey" }]}
+            >
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.buttonContainer, { backgroundColor: "#ea897b" }]}
+              onPress={() => showAlert()}
+            >
+              <Text style={styles.buttonText}>Delete Event</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.startContainer}>
-          <Text style={{ fontWeight: "500" }}>Ends: </Text>
-          <Text style={styles.startTime}>
-            {props.endDate}, {props.endTime}
-          </Text>
+      ) : (
+        <View style={[styles.container, { justifyContent: "center" }]}>
+          <ActivityIndicator color={"grey"} size={"large"} />
         </View>
-        <View style={styles.startContainer}>
-          <Text style={styles.notes}>{props.notes}</Text>
-        </View>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            onPress={() => closeEvent(false)}
-            style={[styles.buttonContainer, { backgroundColor: "lightgrey" }]}
-          >
-            <Text style={styles.buttonText}>Close</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.buttonContainer, { backgroundColor: "#ea897b" }]}
-            onPress={() => showAlert()}
-          >
-            <Text style={styles.buttonText}>Delete Event</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      )}
     </View>
   );
 };
@@ -84,6 +92,7 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: "bold",
     fontSize: 18,
+    textAlign: "center",
   },
   titleContainer: {
     top: 30,

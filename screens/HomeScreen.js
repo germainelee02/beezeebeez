@@ -21,6 +21,7 @@ import {
   doc,
   getDoc,
   DocumentReference,
+  onSnapshot,
 } from "firebase/firestore";
 import { db, authentication } from "../firebase/firebase-config";
 import { Auth, getAuth } from "firebase/auth";
@@ -29,14 +30,14 @@ import WeekCalendar from "../components/homeComponents/WeekCalendar";
 const { height, width } = Dimensions.get("screen");
 
 const HomeScreen = ({ navigation }) => {
-  const handleSignOut = () => {
-    authentication
-      .signOut()
-      .then(() => {
-        navigation.replace("login");
-      })
-      .catch((error) => Alert.alert(error.message));
-  };
+  // const handleSignOut = () => {
+  //   authentication
+  //     .signOut()
+  //     .then(() => {
+  //       navigation.replace("login");
+  //     })
+  //     .catch((error) => Alert.alert(error.message));
+  // };
 
   const [completedCount, setCompletedCount] = useState(0);
 
@@ -64,17 +65,17 @@ const HomeScreen = ({ navigation }) => {
     try {
       setLoading(true);
 
-      //querying user's info
-      const usersDocRef = doc(
-        db,
-        "users",
-        getAuth().currentUser.uid
-      ).withConverter(userConverter);
-      const userRefSnap = await getDoc(usersDocRef);
-      if (userRefSnap.exists()) {
-        const user = userRefSnap.data();
-        setUserName(user.fName);
-      }
+      // //querying user's info
+      // const usersDocRef = doc(
+      //   db,
+      //   "users",
+      //   getAuth().currentUser.uid
+      // ).withConverter(userConverter);
+      // const userRefSnap = await getDoc(usersDocRef);
+      // if (userRefSnap.exists()) {
+      //   const user = userRefSnap.data();
+      //   setUserName(user.fName);
+      // }
 
       // querying the todo list
       const todoCol = query(
@@ -124,6 +125,14 @@ const HomeScreen = ({ navigation }) => {
     getData();
   }, [refresh]);
 
+  // listens for updates on fName field in firebase and changes accordingly
+  useEffect(() => {
+    const usersDocRef = doc(db, "users", getAuth().currentUser.uid);
+    onSnapshot(usersDocRef, (doc) => {
+      setUserName(doc.data().fName);
+    });
+  }, []);
+
   return (
     <SafeAreaView style={{ backgroundColor: "white", flex: 1 }}>
       {/* just a random button to bring you to the mood tracking page */}
@@ -149,7 +158,7 @@ const HomeScreen = ({ navigation }) => {
             <ActivityIndicator size={"large"} />
           </View>
         ) : (
-          <ScrollView style={{ height: "100%" }}>
+          <ScrollView>
             <View
               style={{
                 justifyContent: "center",
@@ -221,17 +230,17 @@ const HomeScreen = ({ navigation }) => {
                 />
               </View>
             </View>
-            <View>
+            {/* <View>
               <TouchableOpacity
                 style={styles.logout}
                 onPress={() => handleSignOut()}
               >
                 <Text style={styles.logoutText}>Log out!</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
 
             {/* empty view to pad scrollview and tab bar */}
-            <View style={{ height: 50 }}></View>
+            <View style={{ height: 150 }}></View>
           </ScrollView>
         )}
       </View>

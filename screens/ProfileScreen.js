@@ -16,7 +16,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
 import { db, authentication } from "../firebase/firebase-config";
 import { Auth, getAuth } from "firebase/auth";
-import { getDoc, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  getDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  onSnapshot,
+} from "firebase/firestore";
 import { userConverter } from "../configs/User";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Input from "../components/profileComponents/Input";
@@ -66,22 +72,34 @@ const ProfileScreen = ({ navigation }) => {
   const getUser = async () => {
     try {
       setLoading(true);
-      const ref = doc(db, "users", getAuth().currentUser.uid).withConverter(
-        userConverter
-      );
-      const docSnap = await getDoc(ref);
-      if (docSnap.exists()) {
-        const user = await docSnap.data();
-        setUser(user);
+      const docRef = doc(db, "users", getAuth().currentUser.uid);
+      onSnapshot(docRef, (doc) => {
+        setUser(doc.data());
         setInputs({
-          email: user.email,
-          fName: user.fName,
-          lName: user.lName,
-          phoneNum: user.phoneNum,
-          userImgUrl: user.imgUrl,
+          email: doc.data().email,
+          fName: doc.data().fName,
+          lName: doc.data().lName,
+          phoneNum: doc.data().phoneNum,
+          userImgUrl: doc.data().imgUrl,
         });
         setLoading(false);
-      }
+      });
+      // const ref = doc(db, "users", getAuth().currentUser.uid).withConverter(
+      //   userConverter
+      // );
+      // const docSnap = await getDoc(ref);
+      // if (docSnap.exists()) {
+      //   const user = await docSnap.data();
+      //   setUser(user);
+      //   setInputs({
+      //     email: user.email,
+      //     fName: user.fName,
+      //     lName: user.lName,
+      //     phoneNum: user.phoneNum,
+      //     userImgUrl: user.imgUrl,
+      //   });
+      //   setLoading(false);
+      // }
     } catch (e) {
       console.log(e);
     }
@@ -97,6 +115,7 @@ const ProfileScreen = ({ navigation }) => {
       if (!pathRef) {
         setUserImgUrl(null);
       }
+
       getDownloadURL(pathRef).then((url) => setUserImgUrl(url));
       setLoading(false);
     } catch (e) {
@@ -183,11 +202,7 @@ const ProfileScreen = ({ navigation }) => {
       getUser();
       getUserPhoto();
     }
-  }, []);
-
-  useEffect(() => {
-    isFocused && getUserPhoto();
-  }, [isFocused]);
+  }, [userImgUrl]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -311,7 +326,12 @@ const ProfileScreen = ({ navigation }) => {
                       error={errors.phoneNum}
                     />
                   </View>
-                  <View style={styles.updateBtnContainer}>
+                  <View
+                    style={[
+                      styles.updateBtnContainer,
+                      { backgroundColor: "#f5e8bb" },
+                    ]}
+                  >
                     <TouchableOpacity onPress={validate}>
                       <Text>Update Profile</Text>
                     </TouchableOpacity>
@@ -393,14 +413,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   updateBtnContainer: {
-    height: 50,
-    width: 192,
-    backgroundColor: "#f5e8bb",
-    borderRadius: 15,
+    height: 45,
+    width: 182,
+    alignSelf: "center",
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
     alignContent: "center",
-    marginLeft: width / 5,
     marginTop: 10,
   },
   editBtn: {

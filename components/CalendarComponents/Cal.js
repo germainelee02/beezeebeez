@@ -10,6 +10,7 @@ import {
   where,
   doc,
   getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { db, authentication } from "../../firebase/firebase-config";
 import moment from "moment";
@@ -18,35 +19,58 @@ const { height, width } = Dimensions.get("window");
 const Cal = (props) => {
   const changeSelectedDate = (date) => {
     props.updateData(date);
+    setSelectedDate(date);
   };
 
+  const [selectedDate, setSelectedDate] = useState(
+    moment().format("DD MMMM YYYY")
+  );
   const [markedDates, setMarkedDates] = useState({});
 
   useEffect(() => {
+    // gets data to mark dates on the calendar
     const getData = async () => {
       const eventsCol = query(
         collection(db, "events: " + authentication.currentUser.uid)
       );
-      const eventsSnashot = await getDocs(eventsCol);
-      const tempArray = {};
-      eventsSnashot.forEach((doc) => {
-        const { startDate } = doc.data();
-        const date = moment(new Date(startDate)).format("YYYY-MM-DD");
-        tempArray[date] = {
-          marked: true,
-        };
+
+      onSnapshot(eventsCol, (snapshot) => {
+        const tempArray = {};
+        snapshot.docs.forEach((doc) => {
+          const { startDate, endDate } = doc.data();
+          const sdate = moment(startDate).format("YYYY-MM-DD");
+          const edate = moment(endDate).format("YYYY-MM-DD");
+          // for (
+          //   let i = moment(sdate);
+          //   i <= moment(edate);
+          //   i = moment(new Date(i)).add(1, "days")
+          // ) {
+          //   i = moment(i).format("YYYY-MM-DD");
+          //   tempArray[i] = {
+          //     marked: true,
+          //   };
+          // }
+          let curr = startDate;
+          while (curr <= endDate) {
+            let fCurr = moment(new Date(curr)).format("YYYY-MM-DD");
+            tempArray[fCurr] = {
+              marked: true,
+            };
+            curr = moment(curr).add(1, "day").format("DD MMMM YYYY");
+          }
+        });
+        setMarkedDates(tempArray);
       });
-      setMarkedDates(tempArray);
     };
     getData();
-  }, []);
+  }, [selectedDate]);
 
   return (
     <View style={{ marginTop: 10, height: 320, marginBottom: 15 }}>
       <Calendar
         calendarWidth={width}
         markedDates={markedDates}
-        markingType={"dot"}
+        markingType={"period"}
         onDayPress={(day) => changeSelectedDate(day.dateString)}
         enableSwipeMonths={true}
         style={{
