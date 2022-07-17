@@ -9,6 +9,7 @@ import MonthlyExpenseScreen from "./MonthlyExpenseScreen";
 import ProfileScreen from "./ProfileScreen";
 import MoodTrackerScreen from "./MoodTrackerScreen";
 import MonthlyMood from "./MonthlyMood";
+import TrackerScreen from "./TrackerScreen";
 
 export {
   LoginScreen,
@@ -22,4 +23,5 @@ export {
   ProfileScreen,
   MoodTrackerScreen,
   MonthlyMood,
+  TrackerScreen,
 };

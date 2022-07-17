@@ -103,9 +103,24 @@ const MonthlyExpenseScreen = ({ navigation }) => {
     calculateBalance();
   };
 
+  const monthInWords = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   let month = [];
   for (let i = 1; i < 13; i++) {
-    month.push({ label: i.toString(), value: i.toString() });
+    month.push({ label: monthInWords[i - 1], value: i.toString() });
   }
 
   const HandleOutsideTouches = () => {
@@ -280,7 +295,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
-    paddingVertical: 15,
+    paddingVertical: 10,
     width: 250,
     paddingHorizontal: 15,
     backgroundColor: "white",

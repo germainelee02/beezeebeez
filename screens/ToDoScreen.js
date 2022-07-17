@@ -1,4 +1,4 @@
-import react, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -10,9 +10,10 @@ import {
   Keyboard,
   Alert,
   ScrollView,
-  ActivityIndicator,
   SafeAreaView,
   Image,
+  RefreshControl,
+  Dimensions,
 } from "react-native";
 import Task from "../components/TaskComponents.js/Task";
 import ImportantTask from "../components/TaskComponents.js/ImportantTask";
@@ -44,7 +45,7 @@ const ToDoListScreen = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const [refresh, setRefresh] = useState(true);
+  const [refresh, setRefresh] = useState(false);
 
   const setNormalTask = (text) => {
     setTask(text);
@@ -128,7 +129,7 @@ const ToDoListScreen = () => {
       setTaskItems(array);
       setTask("");
       setPinned(false);
-      // refreshPage();
+      refreshPage();
     } else {
       Alert.alert("Please write a task before pressing the add button!");
     }
@@ -142,12 +143,7 @@ const ToDoListScreen = () => {
       pinnedItem.id
     );
     await updateDoc(docRef, { pinned: true, timeSent: serverTimestamp() });
-    setImportantTaskItems([pinnedItem, ...importantTaskItems]);
-    let array = [...taskItems];
-    array.splice(index, 1);
-    setTaskItems(array);
-
-    // refreshPage();
+    refreshPage();
   };
 
   const unpinTask = async (index) => {
@@ -188,10 +184,8 @@ const ToDoListScreen = () => {
     await deleteDoc(
       doc(db, "to do: " + authentication.currentUser.uid, item.id)
     );
-    let array = [...taskItems];
-    array.splice(index, 1);
-    setTaskItems(array);
-    //refreshPage();
+
+    refreshPage();
   };
 
   const deleteImportantTask = async (index) => {
@@ -199,10 +193,7 @@ const ToDoListScreen = () => {
     await deleteDoc(
       doc(db, "to do: " + authentication.currentUser.uid, item.id)
     );
-    let array = [...importantTaskItems];
-    array.splice(index, 1);
-    setImportantTaskItems(array);
-    // refreshPage();
+    refreshPage();
   };
 
   const HandleOutsideTouches = () => {
@@ -210,8 +201,23 @@ const ToDoListScreen = () => {
     return false;
   };
 
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setLoading(true);
+    wait(100).then(() => setLoading(false));
+    // setRefresh(false);
+  }, []);
+
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "white" }}
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+      }
+    >
       <SafeAreaView
         style={styles.handleOutside}
         onStartShouldSetResponder={() => HandleOutsideTouches()}
@@ -230,43 +236,42 @@ const ToDoListScreen = () => {
                 Completed: {completedNumber}
               </Text>
             </View>
-            {loading ? (
+            {/* {loading ? (
               <View style={styles.loading}>
                 <ActivityIndicator size={"large"} />
               </View>
-            ) : (
-              <ScrollView style={styles.items}>
-                {importantTaskItems.map((item, index) => {
-                  return (
-                    <ImportantTask
-                      text={item.task}
-                      pinned={item.pinned}
-                      index={index}
-                      key={index}
-                      deleteImportantTask={deleteImportantTask}
-                      unpinTask={unpinTask}
-                      toggleImportantTask={toggleImportantTask}
-                      complete={item.complete}
-                    />
-                  );
-                })}
-                {taskItems.map((item, index) => {
-                  return (
-                    <Task
-                      text={item.task}
-                      pinned={item.pinned}
-                      index={index}
-                      key={index}
-                      deleteTask={deleteTask}
-                      pinTask={pinTask}
-                      toggleTask={toggleTask}
-                      complete={item.complete}
-                    />
-                  );
-                })}
-                {/* <ImportantTask text={"hi"} /> */}
-              </ScrollView>
-            )}
+            ) : ( */}
+            <ScrollView style={styles.items}>
+              {importantTaskItems.map((item, index) => {
+                return (
+                  <ImportantTask
+                    text={item.task}
+                    pinned={item.pinned}
+                    index={index}
+                    key={index}
+                    deleteImportantTask={deleteImportantTask}
+                    unpinTask={unpinTask}
+                    toggleImportantTask={toggleImportantTask}
+                    complete={item.complete}
+                  />
+                );
+              })}
+              {taskItems.map((item, index) => {
+                return (
+                  <Task
+                    text={item.task}
+                    pinned={item.pinned}
+                    index={index}
+                    key={index}
+                    deleteTask={deleteTask}
+                    pinTask={pinTask}
+                    toggleTask={toggleTask}
+                    complete={item.complete}
+                  />
+                );
+              })}
+              {/* <ImportantTask text={"hi"} /> */}
+            </ScrollView>
           </View>
 
           {/* write a task section here */}
@@ -292,7 +297,7 @@ const ToDoListScreen = () => {
           </KeyboardAvoidingView>
         </View>
       </SafeAreaView>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -302,7 +307,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   handleOutside: {
-    flex: 1,
+    height: Dimensions.get("window").height,
+    width: Dimensions.get("window").width,
   },
   loading: {
     position: "absolute",
