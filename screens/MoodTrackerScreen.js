@@ -55,7 +55,6 @@ const MoodTrackerScreen = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-    console.log("mood tracker re-rendered");
   }, [refresh]);
 
   const closeModal = () => {
