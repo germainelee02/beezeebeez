@@ -60,17 +60,8 @@ const ExpenseTrackerScreen = ({ navigation }) => {
   // possible viewType = "all", "inflow", "outflow"
   const [viewType, setViewType] = useState("all");
 
-  const refreshPage = () => {
-    refresh ? setRefresh(false) : setRefresh(true);
-  };
-
-  const onRefresh = React.useCallback(() => {
-    setLoading(true);
-    wait(100).then(() => setLoading(false));
-  }, []);
-
-  const wait = (timeout) => {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
+  const onRefresh = () => {
+    setRefresh(!refresh);
   };
 
   useEffect(() => {
@@ -122,7 +113,7 @@ const ExpenseTrackerScreen = ({ navigation }) => {
     await deleteDoc(
       doc(db, "expenses: " + authentication.currentUser.uid, item.id)
     );
-    refreshPage();
+    onRefresh();
   };
 
   const sendData = async () => {
@@ -145,7 +136,7 @@ const ExpenseTrackerScreen = ({ navigation }) => {
       setExpense("");
       setExpenseType("add");
       setReason("");
-      refreshPage();
+      onRefresh();
     }
   };
 
@@ -232,20 +223,8 @@ const ExpenseTrackerScreen = ({ navigation }) => {
                   Current Balance: -${Number(-balance).toFixed(2).toString()}
                 </Text>
               )}
-              {/* 
-              <TouchableOpacity
-                onPress={() => {
-                  refresh ? setRefresh(false) : setRefresh(true);
-                }}
-              >
-                <EvilIcons name="refresh" size={32} color={"cornflowerblue"} />
-              </TouchableOpacity> */}
             </View>
-            {/* {loading ? (
-              <View style={styles.loading}>
-                <ActivityIndicator size={"large"} />
-              </View>
-            ) : ( */}
+
             <ScrollView style={styles.items}>
               {allExpenses.map((item, index) => {
                 return (
@@ -267,7 +246,7 @@ const ExpenseTrackerScreen = ({ navigation }) => {
 
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={50}
+            keyboardVerticalOffset={100}
             style={styles.writeExpenseWrapper}
           >
             <View>
@@ -366,6 +345,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+    marginBottom: 50,
   },
   date: {
     backgroundColor: "white",
