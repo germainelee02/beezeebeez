@@ -26,3 +26,15 @@ https://user-images.githubusercontent.com/97350904/180189557-93f23848-6f32-4d9a-
 #### View by inflows and outflows
 https://user-images.githubusercontent.com/97350904/180190437-58fff458-6aa8-4911-954a-4d279d882b82.mp4
 
+### Monthly Expense View
+https://user-images.githubusercontent.com/97350904/180201032-dea55a11-44bc-468f-a055-ef1507b65d73.mp4
+
+### Mood Tracker
+https://user-images.githubusercontent.com/97350904/180202499-8123fdd8-f3ef-4732-b04f-e9c8abed749e.mp4
+
+### Personal Calendar
+https://user-images.githubusercontent.com/97350904/180204046-1c7c81dd-f9bc-4bf5-91b1-71202181c126.mp4
+
+
+
+
