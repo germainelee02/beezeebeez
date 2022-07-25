@@ -87,13 +87,17 @@ const MonthlyExpenseScreen = ({ navigation }) => {
     if (viewType == "inflow") {
       q = query(
         collection(db, "expenses: " + authentication.currentUser.uid),
-        where("expenseType", "==", "add")
+        where("expenseType", "==", "add"),
+        where("months", "==", months),
+        where("years", "==", years)
       );
     }
     if (viewType == "outflow") {
       q = query(
         collection(db, "expenses: " + authentication.currentUser.uid),
-        where("expenseType", "==", "minus")
+        where("expenseType", "==", "minus"),
+        where("months", "==", months),
+        where("years", "==", years)
       );
     }
 

@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Calendar, CalendarList } from "react-native-calendars";
 import { authentication, db } from "../firebase/firebase-config";

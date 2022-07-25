@@ -166,14 +166,14 @@ function SignUpScreen(props) {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: "rgba(245, 233, 188, 1)",
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
   },
   NameBox: {
     height: 50,
     width: width - 40,
-    backgroundColor: "white",
+    backgroundColor: "rgba(245, 233, 188, 1)",
     margin: 10,
     borderRadius: 15,
     padding: 10,
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   emailBox: {
     height: 50,
     width: width - 40,
-    backgroundColor: "white",
+    backgroundColor: "rgba(245, 233, 188, 1)",
     margin: 10,
     borderRadius: 15,
     padding: 10,
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: "center",
     padding: 10,
-    backgroundColor: "white",
+    backgroundColor: "rgba(245, 233, 188, 1)",
     borderRadius: 10,
     height: 50,
     width: width - 40,

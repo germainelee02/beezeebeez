@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Button,
   View,
   StyleSheet,
   Text,
@@ -10,10 +9,13 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Dimensions,
 } from "react-native";
 import { authentication } from "../firebase/firebase-config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+const { height, width } = Dimensions.get("window");
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -86,6 +88,21 @@ const LoginScreen = ({ navigation }) => {
             <MaterialCommunityIcons name={icon} size={25} />
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("reset password screen")}
+          style={{
+            justifyContent: "flex-end",
+            flexDirection: "row",
+            alignItems: "center",
+            width: width,
+            marginRight: 30,
+            marginTop: 10,
+          }}
+        >
+          <Text style={{ textDecorationLine: "underline", fontSize: 15 }}>
+            Forgot your password?
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.loginButton}
@@ -139,7 +156,7 @@ const styles = StyleSheet.create({
     borderColor: "gainsboro",
   },
   loginText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
   },
   passwordContainer: {
@@ -162,7 +179,7 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     textDecorationLine: "underline",
-    fontSize: 18,
+    fontSize: 17,
   },
   signUp: {
     position: "absolute",

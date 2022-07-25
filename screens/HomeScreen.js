@@ -129,7 +129,8 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const usersDocRef = doc(db, "users", getAuth().currentUser.uid);
     onSnapshot(usersDocRef, (doc) => {
-      setUserName(doc.data().fName);
+      const { fName } = doc.data();
+      setUserName(fName);
     });
   }, []);
 

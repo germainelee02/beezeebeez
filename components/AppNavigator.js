@@ -20,7 +20,6 @@ const AppNavigator = () => {
           component={Screens.SignUpScreen}
           options={{
             title: "Sign Up",
-            headerStyle: { backgroundColor: "rgba(245, 233, 188, 1)" },
           }}
         />
         <Stack.Screen
@@ -52,6 +51,11 @@ const AppNavigator = () => {
           name="expense tracker"
           component={Screens.ExpenseTrackerScreen}
           options={{ title: "Expenses" }}
+        />
+        <Stack.Screen
+          name="reset password screen"
+          component={Screens.ResetPasswordScreen}
+          options={{ title: "Reset Password" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
