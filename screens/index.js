@@ -9,6 +9,9 @@ import MonthlyExpenseScreen from "./MonthlyExpenseScreen";
 import ProfileScreen from "./ProfileScreen";
 import MoodTrackerScreen from "./MoodTrackerScreen";
 import MonthlyMood from "./MonthlyMood";
+import InviteFriendsScreen from "./InviteFriendsScreen";
+import ChatScreen from "./ChatScreen";
+import OptionsScreen from "./OptionsScreen";
 import TrackerScreen from "./TrackerScreen";
 import ResetPasswordScreen from "./ResetPasswordScreen";
 
@@ -24,6 +27,9 @@ export {
   ProfileScreen,
   MoodTrackerScreen,
   MonthlyMood,
+  InviteFriendsScreen,
+  ChatScreen,
+  OptionsScreen,
   TrackerScreen,
   ResetPasswordScreen,
 };

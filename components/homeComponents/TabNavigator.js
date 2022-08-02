@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import * as Screens from "../../screens/index";
 import HomeDrawer from "./HomeDrawer";
-import CreateEventButton from "../CalendarComponents/CreateEventButton";
 import { Octicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();

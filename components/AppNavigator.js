@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import * as Screens from "../screens/index";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import TabNavigator from "./homeComponents/TabNavigator";
+import TabNavigator from "./HomeComponents/TabNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +41,27 @@ const AppNavigator = () => {
           name="monthly mood"
           component={Screens.MonthlyMood}
           options={{ headerShown: true, title: "Monthly Mood" }}
+        />
+        <Stack.Screen
+          name="groups"
+          component={Screens.FriendsScreen}
+          options={{ headerShown: false, title: "" }}
+        />
+
+        <Stack.Screen
+          name="invite"
+          component={Screens.InviteFriendsScreen}
+          options={{ headerShown: true, title: "Add Friend" }}
+        />
+        <Stack.Screen
+          name="chat"
+          component={Screens.ChatScreen}
+          options={{ headerShown: true, title: "" }}
+        />
+        <Stack.Screen
+          name="options"
+          component={Screens.OptionsScreen}
+          options={{ headerShown: false, title: "" }}
         />
         <Stack.Screen
           name="tracker screen"

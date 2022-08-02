@@ -25,8 +25,8 @@ import {
 } from "firebase/firestore";
 import { userConverter } from "../configs/User";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Input from "../components/profileComponents/Input";
-import ProfilePictureModal from "../components/profileComponents/ProfilePictureModal";
+import Input from "../components/ProfileComponents/Input";
+import ProfilePictureModal from "../components/ProfileComponents/ProfilePictureModal";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 const { height, width } = Dimensions.get("screen");
@@ -116,7 +116,9 @@ const ProfileScreen = ({ navigation }) => {
         setUserImgUrl(null);
       }
 
-      getDownloadURL(pathRef).then((url) => setUserImgUrl(url));
+      getDownloadURL(pathRef)
+        .then((url) => setUserImgUrl(url))
+        .catch((e) => console.log(e));
       setLoading(false);
     } catch (e) {
       console.log(e);

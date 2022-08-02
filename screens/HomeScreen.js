@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import * as Components from "../components/homeComponents/index";
+import * as Components from "../components/HomeComponents/index";
 import moment from "moment";
 import {
   query,
@@ -26,7 +26,7 @@ import {
 import { db, authentication } from "../firebase/firebase-config";
 import { Auth, getAuth } from "firebase/auth";
 import { userConverter } from "../configs/User";
-import WeekCalendar from "../components/homeComponents/WeekCalendar";
+import WeekCalendar from "../components/HomeComponents/WeekCalendar";
 const { height, width } = Dimensions.get("screen");
 
 const HomeScreen = ({ navigation }) => {
@@ -271,11 +271,12 @@ const styles = StyleSheet.create({
   },
   FavouriteGroupsContainer: {
     marginTop: 20,
-    height: 200,
+    // height: 200,
     width: width - 40,
   },
   EventsTodayContainer: {
     marginTop: 20,
+    marginBottom: 20,
   },
   ExpensesTodayContainer: {
     marginRight: 18,

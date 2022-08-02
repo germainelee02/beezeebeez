@@ -149,8 +149,8 @@ const CreateEventModal = (props) => {
       setIsDataValid(false);
     } else {
       if (
-        startDate == endDate &&
-        !(convertTime12to24(endTime) > convertTime12to24(startTime))
+        startDate === endDate &&
+        convertTime12to24(endTime) <= convertTime12to24(startTime)
       ) {
         handleError("Please enter a valid time", "endDate");
         isValid = false;
@@ -238,7 +238,7 @@ const CreateEventModal = (props) => {
                 validate();
               }}
             >
-              <Text style={styles.tick}>✓</Text>
+              <MaterialIcons name="done" size={24} color="white" />
             </TouchableOpacity>
           </View>
           <Modal visible={isLoadingScreenOpen}>
@@ -292,17 +292,17 @@ const styles = StyleSheet.create({
     bottom: 20,
     position: "absolute",
     top: height - 20,
-    left: width - 70,
+    left: width - 80,
     justifyContent: "flex-end",
   },
   createBtn: {
     backgroundColor: "#ffba09",
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    bottom: 5,
+    bottom: 20,
   },
 });
