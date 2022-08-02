@@ -10,6 +10,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo/ngrok": "^4.1.0",
     "@gorhom/bottom-sheet": "^4",
     "@react-native-community/cli": "^8.0.2",
     "@react-native-community/datetimepicker": "^6.2.0",

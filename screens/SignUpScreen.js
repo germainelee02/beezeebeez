@@ -74,7 +74,7 @@ function SignUpScreen(props) {
       createUserWithEmailAndPassword(authentication, email, password)
         .then((userCredentials) => {
           const user = userCredentials.user;
-          console.log(user.email);
+          // console.log(user.email);
           // adds user into the firestore data base under "users" collection
           // and doc labelled with its user uid
           setDoc(doc(db, "users", getAuth().currentUser.uid), {
