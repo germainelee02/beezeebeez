@@ -7,7 +7,7 @@ import {
   Modal,
 } from "react-native";
 import React, { useState } from "react";
-import EventModal from "./EventModal";
+import EventModal from "./../EventModal";
 const { height, width } = Dimensions.get("window");
 
 const PastEvent = ({ item }) => {

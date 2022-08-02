@@ -69,28 +69,19 @@ const styles = StyleSheet.create({
   },
   createBtn: {
     backgroundColor: "#ffba09",
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
     bottom: 5,
-    shadow: {
-      shadowColor: "white",
-      shadowOffset: {
-        width: 5,
-        height: 5,
-      },
-      shadowOpacity: 0.8,
-      shadowRadius: 4.5,
-      elevation: 4,
-    },
   },
   createBtnContainer: {
     position: "absolute",
     top: height - 90,
-    left: width - 60,
+    left: width - 80,
+    right: 20,
   },
 });
 

@@ -19,7 +19,7 @@ const { height, width } = Dimensions.get("screen");
 const EventsToday = (props) => {
   const isFocused = useIsFocused();
   const dateNow = moment().format("DD MMMM YYYY");
-  const dateSelected = moment(props.date).format("DD MMMM YYYY");
+  const dateSelected = moment(new Date(props.date)).format("DD MMMM YYYY");
   const [ongoingEvents, setOngoingEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
 
@@ -42,11 +42,12 @@ const EventsToday = (props) => {
   };
 
   useEffect(() => {
-    const getData = async () => {
+    const unsubscribe = async () => {
       const eventsCol = query(
         collection(db, "events: " + authentication.currentUser.uid),
         orderBy("startDateTime")
       );
+
       onSnapshot(eventsCol, (snapshot) => {
         let tempOngoing = [];
         let tempUpcoming = [];
@@ -56,64 +57,54 @@ const EventsToday = (props) => {
           const docEndTime = convertTime12to24(doc.data().endTime);
           const docStartDate = doc.data().startDate;
           const docEndDate = doc.data().endDate;
-
-          if (docStartDate === dateSelected) {
-            if (docStartDate < dateNow) {
-              // do nothing
-            } else if (docStartDate > dateNow) {
+          if (docStartDate === dateNow) {
+            if (docStartTime > convertTime12to24(moment().format("h:mm A"))) {
+              // upcoming event
               tempUpcoming.push(doc.data());
-            } else if (docStartDate === dateNow) {
-              if (docEndDate > dateSelected && dateSelected === dateNow) {
-                tempOngoing.push(doc.data());
-              } else if (
-                docEndTime < convertTime12to24(moment().format("h:mm A"))
-              ) {
-                // do nothing
-              } else if (
-                docStartTime > convertTime12to24(moment().format("h:mm A"))
-              ) {
-                tempUpcoming.push(doc.data());
-              } else if (
-                docStartTime <= convertTime12to24(moment().format("h:mm A")) &&
-                docEndTime > convertTime12to24(moment().format("h:mm A")) &&
-                dateSelected === dateNow
-              ) {
-                tempOngoing.push(doc.data());
-              }
+            } else if (
+              docStartTime <= convertTime12to24(moment().format("h:mm A")) &&
+              docEndTime > convertTime12to24(moment().format("h:mm A")) &&
+              docEndDate === dateNow
+            ) {
+              // event has started, event has not ended
+              tempOngoing.push(doc.data());
+            } else if (
+              docStartTime <= convertTime12to24(moment().format("h:mm A")) &&
+              docEndDate > dateNow
+            ) {
+              tempOngoing.push(doc.data());
             }
-          } else if (
-            docStartDate < dateSelected &&
-            docEndDate > dateSelected &&
-            dateSelected === dateNow
-          ) {
+          } else if (docStartDate < dateNow && docEndDate > dateNow) {
+            // event started before today and ends tmr
             tempOngoing.push(doc.data());
-          } else if (
-            docEndDate == dateSelected &&
-            docStartDate < dateSelected &&
-            dateSelected === dateNow
-          ) {
-            tempOngoing.push(doc.data());
-          } else if (docEndDate === dateSelected) {
-            tempUpcoming.push(doc.data());
-          } else if (
-            docStartDate < dateSelected &&
-            docEndDate > dateSelected &&
-            dateSelected > dateNow
-          ) {
-            tempUpcoming.push(doc.data());
           }
         });
         setOngoingEvents(tempOngoing);
         setUpcomingEvents(tempUpcoming);
       });
     };
-    getData();
+    unsubscribe();
   }, [isFocused]);
 
   return (
     <View style={props.style}>
       <Text style={styles.header}>Today's Events</Text>
       <View style={[styles.container]}>
+        {ongoingEvents.length === 0 && upcomingEvents.length === 0 ? (
+          <View
+            style={{
+              height: 60,
+              // borderWidth: 1,
+              // borderColor: "red",
+              justifyContent: "center",
+              alignSelf: "center",
+            }}
+          >
+            <Text>You have no events today</Text>
+          </View>
+        ) : (
+          <View></View>
+        )}
         {ongoingEvents.length != 0 ? (
           <View>
             <Text style={styles.subheading}>Ongoing</Text>
@@ -132,7 +123,7 @@ const EventsToday = (props) => {
                   }}
                   key={item.id}
                 >
-                  <View sty>
+                  <View>
                     <Text>{item.startTime}</Text>
                   </View>
                   <View>
@@ -190,6 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: "center",
     marginTop: 15,
+    paddingBottom: 15,
   },
   header: {
     marginTop: 20,

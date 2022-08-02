@@ -90,10 +90,15 @@ const AgendaView = (props) => {
             } else if (docStartDate > dateNow) {
               tempUpcoming.push(doc.data());
             } else if (docStartDate === dateNow) {
-              if (docEndDate > dateSelected && dateSelected === dateNow) {
+              if (
+                docEndDate > dateSelected &&
+                dateSelected === dateNow &&
+                docStartTime <= convertTime12to24(moment().format("h:mm A"))
+              ) {
                 tempOngoing.push(doc.data());
               } else if (
-                docEndTime < convertTime12to24(moment().format("h:mm A"))
+                docEndTime < convertTime12to24(moment().format("h:mm A")) &&
+                docEndDate === dateSelected
               ) {
                 tempPast.push(doc.data());
               } else if (
@@ -120,7 +125,7 @@ const AgendaView = (props) => {
             dateSelected === dateNow
           ) {
             tempOngoing.push(doc.data());
-          } else if (docEndDate === dateSelected) {
+          } else if (docEndDate === dateSelected && dateSelected > dateNow) {
             tempUpcoming.push(doc.data());
           } else if (
             docStartDate < dateSelected &&
@@ -256,7 +261,7 @@ const AgendaView = (props) => {
 };
 const styles = StyleSheet.create({
   title: {
-    fontSize: 18,
+    fontSize: 20,
     letterSpacing: -1,
     fontWeight: "bold",
     marginBottom: 15,
