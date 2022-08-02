@@ -12,6 +12,8 @@ import MonthlyMood from "./MonthlyMood";
 import InviteFriendsScreen from "./InviteFriendsScreen";
 import ChatScreen from "./ChatScreen";
 import OptionsScreen from "./OptionsScreen";
+import TrackerScreen from "./TrackerScreen";
+import ResetPasswordScreen from "./ResetPasswordScreen";
 
 export {
   LoginScreen,
@@ -28,4 +30,6 @@ export {
   InviteFriendsScreen,
   ChatScreen,
   OptionsScreen,
+  TrackerScreen,
+  ResetPasswordScreen,
 };

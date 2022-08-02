@@ -20,7 +20,6 @@ const AppNavigator = () => {
           component={Screens.SignUpScreen}
           options={{
             title: "Sign Up",
-            headerStyle: { backgroundColor: "rgba(245, 233, 188, 1)" },
           }}
         />
         <Stack.Screen
@@ -36,7 +35,7 @@ const AppNavigator = () => {
         <Stack.Screen
           name="mood tracker"
           component={Screens.MoodTrackerScreen}
-          options={{ headerShown: true }} // temporary header... later on remove the header!!
+          options={{ headerShown: true, title: "Mood" }}
         />
         <Stack.Screen
           name="monthly mood"
@@ -63,6 +62,21 @@ const AppNavigator = () => {
           name="options"
           component={Screens.OptionsScreen}
           options={{ headerShown: false, title: "" }}
+        />
+        <Stack.Screen
+          name="tracker screen"
+          component={Screens.TrackerScreen}
+          options={{ headerShown: true, title: "Tracking" }}
+        />
+        <Stack.Screen
+          name="expense tracker"
+          component={Screens.ExpenseTrackerScreen}
+          options={{ title: "Expenses" }}
+        />
+        <Stack.Screen
+          name="reset password screen"
+          component={Screens.ResetPasswordScreen}
+          options={{ title: "Reset Password" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

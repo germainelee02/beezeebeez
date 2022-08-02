@@ -30,24 +30,23 @@ const ReasonModal = ({ visible, addMarkedDays, closeReModal }) => {
                 Why are you feeling this way?
               </Text>
             </View>
-            <View
+            <KeyboardAvoidingView
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
                 alignItems: "center",
               }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={300}
             >
-              <KeyboardAvoidingView
-                behavior={Platform.OS == "ios" ? "padding" : "height"}
-                style={styles.reason}
-              >
+              <View style={styles.reason}>
                 <TextInput
                   style={{ padding: 10 }}
                   placeholder={"Reason..."}
                   value={reason}
                   onChangeText={(text) => setReason(text)}
                 />
-              </KeyboardAvoidingView>
+              </View>
               <TouchableOpacity
                 onPress={() => {
                   addMarkedDays(reason);
@@ -56,7 +55,7 @@ const ReasonModal = ({ visible, addMarkedDays, closeReModal }) => {
               >
                 <AntDesign name="enter" size={20} />
               </TouchableOpacity>
-            </View>
+            </KeyboardAvoidingView>
           </View>
           <View
             style={{
@@ -80,9 +79,8 @@ const styles = StyleSheet.create({
   },
   reason: {
     width: "70%",
-    // padding: 10,
+    // height: 50,
     justifyContent: "center",
-    // alignItems: "center",
     margin: 30,
     borderWidth: 1,
     borderRadius: 10,

@@ -10,8 +10,10 @@ import {
   Platform,
   TouchableOpacity,
   SafeAreaView,
-  ActivityIndicator,
+  // ActivityIndicator,
+  RefreshControl,
   Image,
+  Dimensions,
 } from "react-native";
 import { FontAwesome, EvilIcons } from "@expo/vector-icons";
 import { db, authentication } from "../firebase/firebase-config";
@@ -53,13 +55,13 @@ const ExpenseTrackerScreen = ({ navigation }) => {
 
   const [refresh, setRefresh] = useState(true);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // possible viewType = "all", "inflow", "outflow"
   const [viewType, setViewType] = useState("all");
 
-  const refreshPage = () => {
-    refresh ? setRefresh(false) : setRefresh(true);
+  const onRefresh = () => {
+    setRefresh(!refresh);
   };
 
   useEffect(() => {
@@ -104,14 +106,14 @@ const ExpenseTrackerScreen = ({ navigation }) => {
       setBalance(tempNum);
     };
     getData();
-  }, [balance, refresh, viewType]);
+  }, [balance, refresh, viewType, loading]);
 
   const deleteItem = async (index) => {
     const item = allExpenses[index];
     await deleteDoc(
       doc(db, "expenses: " + authentication.currentUser.uid, item.id)
     );
-    refreshPage();
+    onRefresh();
   };
 
   const sendData = async () => {
@@ -134,7 +136,7 @@ const ExpenseTrackerScreen = ({ navigation }) => {
       setExpense("");
       setExpenseType("add");
       setReason("");
-      refreshPage();
+      onRefresh();
     }
   };
 
@@ -144,9 +146,24 @@ const ExpenseTrackerScreen = ({ navigation }) => {
     date.push({ label: i.toString(), value: i.toString() });
   }
 
+  const monthInWords = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   let month = [];
   for (let i = 1; i < 13; i++) {
-    month.push({ label: i.toString(), value: i.toString() });
+    month.push({ label: monthInWords[i - 1], value: i.toString() });
   }
 
   const addOrSubtract = () => {
@@ -162,7 +179,12 @@ const ExpenseTrackerScreen = ({ navigation }) => {
     return false;
   };
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "white" }}
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+      }
+    >
       <SafeAreaView
         style={styles.handleOutside}
         onStartShouldSetResponder={() => HandleOutsideTouches()}
@@ -201,43 +223,30 @@ const ExpenseTrackerScreen = ({ navigation }) => {
                   Current Balance: -${Number(-balance).toFixed(2).toString()}
                 </Text>
               )}
-
-              <TouchableOpacity
-                onPress={() => {
-                  refresh ? setRefresh(false) : setRefresh(true);
-                }}
-              >
-                <EvilIcons name="refresh" size={32} color={"cornflowerblue"} />
-              </TouchableOpacity>
             </View>
-            {loading ? (
-              <View style={styles.loading}>
-                <ActivityIndicator size={"large"} />
-              </View>
-            ) : (
-              <ScrollView style={styles.items}>
-                {allExpenses.map((item, index) => {
-                  return (
-                    <Expense
-                      date={item.dates}
-                      month={item.months}
-                      year={item.years}
-                      expense={item.expense}
-                      expenseType={item.expenseType}
-                      reason={item.reason}
-                      key={index}
-                      index={index}
-                      deleteItem={deleteItem}
-                    />
-                  );
-                })}
-              </ScrollView>
-            )}
+
+            <ScrollView style={styles.items}>
+              {allExpenses.map((item, index) => {
+                return (
+                  <Expense
+                    date={item.dates}
+                    month={item.months}
+                    year={item.years}
+                    expense={item.expense}
+                    expenseType={item.expenseType}
+                    reason={item.reason}
+                    key={index}
+                    index={index}
+                    deleteItem={deleteItem}
+                  />
+                );
+              })}
+            </ScrollView>
           </View>
 
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={50}
+            keyboardVerticalOffset={100}
             style={styles.writeExpenseWrapper}
           >
             <View>
@@ -319,7 +328,7 @@ const ExpenseTrackerScreen = ({ navigation }) => {
           </KeyboardAvoidingView>
         </View>
       </SafeAreaView>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -336,6 +345,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+    marginBottom: 50,
   },
   date: {
     backgroundColor: "white",
@@ -360,7 +370,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   handleOutside: {
-    flex: 1,
+    height: Dimensions.get("window").height,
+    width: Dimensions.get("window").width,
   },
   items: {
     marginTop: 10,

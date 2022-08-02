@@ -129,16 +129,17 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const usersDocRef = doc(db, "users", getAuth().currentUser.uid);
     onSnapshot(usersDocRef, (doc) => {
-      setUserName(doc.data().fName);
+      const { fName } = doc.data();
+      setUserName(fName);
     });
   }, []);
 
   return (
     <SafeAreaView style={{ backgroundColor: "white", flex: 1 }}>
       {/* just a random button to bring you to the mood tracking page */}
-      <TouchableOpacity onPress={() => navigation.navigate("mood tracker")}>
+      {/* <TouchableOpacity onPress={() => navigation.navigate("mood tracker")}>
         <Text>mood</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <StatusBar style="auto" />
       <View
         style={{

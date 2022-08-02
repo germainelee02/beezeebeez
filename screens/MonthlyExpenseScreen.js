@@ -12,6 +12,8 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Image,
+  RefreshControl,
+  Dimensions,
 } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -27,6 +29,8 @@ import {
 import RNSelectPicker from "react-native-picker-select";
 import Expense from "../components/ExpenseComponents/Expense";
 import moment from "moment";
+
+const { height, width } = Dimensions.get("window");
 
 const MonthlyExpenseScreen = ({ navigation }) => {
   const [allExpenses, setAllExpenses] = useState([]);
@@ -69,7 +73,7 @@ const MonthlyExpenseScreen = ({ navigation }) => {
 
   useEffect(() => {
     searchMonth();
-  }, [refresh, viewType]);
+  }, [refresh, viewType, balance]);
 
   const searchMonth = async () => {
     Keyboard.dismiss();
@@ -83,13 +87,17 @@ const MonthlyExpenseScreen = ({ navigation }) => {
     if (viewType == "inflow") {
       q = query(
         collection(db, "expenses: " + authentication.currentUser.uid),
-        where("expenseType", "==", "add")
+        where("expenseType", "==", "add"),
+        where("months", "==", months),
+        where("years", "==", years)
       );
     }
     if (viewType == "outflow") {
       q = query(
         collection(db, "expenses: " + authentication.currentUser.uid),
-        where("expenseType", "==", "minus")
+        where("expenseType", "==", "minus"),
+        where("months", "==", months),
+        where("years", "==", years)
       );
     }
 
@@ -103,17 +111,42 @@ const MonthlyExpenseScreen = ({ navigation }) => {
     calculateBalance();
   };
 
+  const monthInWords = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   let month = [];
   for (let i = 1; i < 13; i++) {
-    month.push({ label: i.toString(), value: i.toString() });
+    month.push({ label: monthInWords[i - 1], value: i.toString() });
   }
 
   const HandleOutsideTouches = () => {
     Keyboard.dismiss();
     return false;
   };
+
+  const onRefresh = () => {
+    setRefresh(!refresh);
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "white" }}
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+      }
+    >
       <SafeAreaView
         style={styles.handleOutside}
         onStartShouldSetResponder={() => HandleOutsideTouches()}
@@ -144,38 +177,26 @@ const MonthlyExpenseScreen = ({ navigation }) => {
                   Current Balance: -${Number(-balance).toFixed(2).toString()}
                 </Text>
               )}
-
-              <TouchableOpacity
-                onPress={() => {
-                  refresh ? setRefresh(false) : setRefresh(true);
-                }}
-              >
-                <EvilIcons name="refresh" size={32} color={"cornflowerblue"} />
-              </TouchableOpacity>
             </View>
-            {loading ? (
-              <View style={styles.loading}>
-                <ActivityIndicator size={"large"} />
-              </View>
-            ) : (
-              <ScrollView style={styles.items}>
-                {allExpenses.map((item, index) => {
-                  return (
-                    <Expense
-                      date={item.dates}
-                      month={item.months}
-                      year={item.years}
-                      expense={item.expense}
-                      reason={item.reason}
-                      key={index}
-                      index={index}
-                      expenseType={item.expenseType}
-                      deleteItem={deleteItem}
-                    />
-                  );
-                })}
-              </ScrollView>
-            )}
+
+            <ScrollView style={styles.items}>
+              {allExpenses.map((item, index) => {
+                return (
+                  <Expense
+                    date={item.dates}
+                    month={item.months}
+                    year={item.years}
+                    expense={item.expense}
+                    reason={item.reason}
+                    key={index}
+                    index={index}
+                    expenseType={item.expenseType}
+                    deleteItem={deleteItem}
+                  />
+                );
+              })}
+            </ScrollView>
+            {/* )} */}
           </View>
 
           <KeyboardAvoidingView
@@ -203,9 +224,6 @@ const MonthlyExpenseScreen = ({ navigation }) => {
 
             <TouchableOpacity onPress={() => searchMonth()}>
               <View>
-                {/* <View style={styles.addWrapper}>
-                  <Text style={{ color: "grey" }}>Search</Text>
-                </View> */}
                 <Image
                   source={require("../assets/images/bee/bee-left.png")}
                   resizeMode="contain"
@@ -216,7 +234,7 @@ const MonthlyExpenseScreen = ({ navigation }) => {
           </KeyboardAvoidingView>
         </View>
       </SafeAreaView>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -233,6 +251,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+    marginBottom: 50,
   },
   date: {
     backgroundColor: "white",
@@ -257,7 +276,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   handleOutside: {
-    flex: 1,
+    // flex: 1,
+    height: height,
+    width: width,
   },
   items: {
     marginTop: 30,
@@ -280,7 +301,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
-    paddingVertical: 15,
+    paddingVertical: 10,
     width: 250,
     paddingHorizontal: 15,
     backgroundColor: "white",

@@ -92,9 +92,12 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
+        // changed to tracker screen for mood/expenses
         name="Trackers"
-        component={Screens.ExpenseTrackerScreen}
+        component={Screens.TrackerScreen}
         options={{
+          title: "Tracking",
+          headerShown: true,
           tabBarIcon: ({ focused }) => (
             <View
               style={{
