@@ -18,6 +18,11 @@ https://user-images.githubusercontent.com/97350904/180183609-b049f8e2-d5bc-44d0-
 #### Viewing everything at a glance
 https://user-images.githubusercontent.com/87461298/182651517-6fb061c4-196b-4cb5-9720-c7c04747434a.mp4
 
+### Profile Screen
+#### Edit user information and set profile picture
+https://user-images.githubusercontent.com/87461298/182654702-89dcd4c3-f458-45f9-871a-5b72aa0d90e9.mp4
+
+
 ### To-do List
 #### Pin, star, and mark tasks as 'completed'
 https://user-images.githubusercontent.com/97350904/180189557-93f23848-6f32-4d9a-871b-0f44de187c5d.mp4
