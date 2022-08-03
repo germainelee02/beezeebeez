@@ -88,7 +88,7 @@ const FriendItem = ({ friend, enterChat }) => {
       ) : (
         <Avatar
           rounded
-          source={require("../../assets/images/group/blank-profile-picture.png")}
+          source={require("../../../assets/images/group/blank-profile-picture.png")}
         />
       )}
       <ListItem.Content style={{ flexDirection: "row", marginBottom: 20 }}>
