@@ -11,15 +11,15 @@ npm-debug.*
 web-build/
 
 # macOS
-.DS_Store
-firebase
-ios
-babel.config.js
-metro.config.js
-package-lock.json
-package.json
-tsconfig.json
-yarn.lock
-.expo-shared
-.vscode
-app.json
+# .DS_Store
+# firebase
+# ios
+# babel.config.js
+# metro.config.js
+# package-lock.json
+# package.json
+# tsconfig.json
+# yarn.lock
+# .expo-shared
+# .vscode
+# app.json
