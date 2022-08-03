@@ -35,6 +35,8 @@ https://user-images.githubusercontent.com/97350904/180202499-8123fdd8-f3ef-4732-
 ### Personal Calendar
 https://user-images.githubusercontent.com/97350904/180204046-1c7c81dd-f9bc-4bf5-91b1-71202181c126.mp4
 
+### Chat wtih Friends
+https://user-images.githubusercontent.com/87461298/182645279-afaad094-9906-4879-85e3-005eb534543a.mp4
 
 
 
