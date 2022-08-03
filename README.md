@@ -16,7 +16,7 @@ https://user-images.githubusercontent.com/97350904/180183609-b049f8e2-d5bc-44d0-
 
 ### Home Screen
 #### Viewing everything at a glance
-https://user-images.githubusercontent.com/97350904/180185145-cf820f7b-4d8c-4e33-950e-b95cd62cc0b0.mp4
+https://user-images.githubusercontent.com/87461298/182651517-6fb061c4-196b-4cb5-9720-c7c04747434a.mp4
 
 ### To-do List
 #### Pin, star, and mark tasks as 'completed'
