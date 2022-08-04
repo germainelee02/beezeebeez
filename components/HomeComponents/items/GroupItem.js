@@ -11,7 +11,7 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { db } from "../../../firebase/firebase-config";
+import { authentication, db } from "../../../firebase/firebase-config";
 
 const GroupItem = ({ group, index, length, enterChat, favouriteChats }) => {
   const [img, setImg] = useState("");
@@ -20,7 +20,11 @@ const GroupItem = ({ group, index, length, enterChat, favouriteChats }) => {
   useEffect(() => {
     // get friend from user collection
     const getFriend = async () => {
-      const docRef = doc(db, "users", group.friendId);
+      const docRef = doc(
+        db,
+        "friends: " + authentication.currentUser.uid,
+        group.friendId
+      );
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setFriend(docSnap.data());
@@ -53,6 +57,7 @@ const GroupItem = ({ group, index, length, enterChat, favouriteChats }) => {
   return (
     <TouchableOpacity
       key={group}
+      // enterChat(id, friend, img)
       onPress={() => enterChat(group.groupId, friend, img)}
     >
       <View

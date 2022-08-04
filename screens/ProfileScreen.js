@@ -14,7 +14,6 @@ import {
 import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
-import { db, authentication } from "../firebase/firebase-config";
 import { Auth, getAuth } from "firebase/auth";
 import {
   getDoc,
@@ -28,6 +27,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Input from "../components/ProfileComponents/Input";
 import ProfilePictureModal from "../components/ProfileComponents/ProfilePictureModal";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { authentication, db, storageRef } from "../firebase/firebase-config";
 
 const { height, width } = Dimensions.get("screen");
 

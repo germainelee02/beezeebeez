@@ -83,7 +83,7 @@ const EventsToday = (props) => {
         setUpcomingEvents(tempUpcoming);
       });
     };
-    unsubscribe();
+    return unsubscribe;
   }, [isFocused]);
 
   return (
