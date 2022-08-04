@@ -52,6 +52,10 @@ const ChatScreen = ({ navigation, route }) => {
     });
   };
 
+  // useEffect(() => {
+  //   console.log(route.params.id);
+  // }, []);
+
   // header design
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -139,7 +143,6 @@ const ChatScreen = ({ navigation, route }) => {
   const sendMessage = async () => {
     Keyboard.dismiss;
     // // add doc to message collection in groups collection
-    let img = "";
     try {
       const now = moment();
       addDoc(collection(db, "groups", route.params.id, "messages"), {
@@ -173,7 +176,6 @@ const ChatScreen = ({ navigation, route }) => {
           onContentSizeChange={() =>
             scrollViewRef.current.scrollToEnd({ animated: false })
           }
-          onTouchEnd={() => setIsScrollEnd(true)}
         >
           {messages.length === 0 ? (
             <View

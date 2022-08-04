@@ -64,20 +64,6 @@ const HomeScreen = ({ navigation }) => {
   const getData = async () => {
     try {
       setLoading(true);
-
-      // //querying user's info
-      // const usersDocRef = doc(
-      //   db,
-      //   "users",
-      //   getAuth().currentUser.uid
-      // ).withConverter(userConverter);
-      // const userRefSnap = await getDoc(usersDocRef);
-      // if (userRefSnap.exists()) {
-      //   const user = userRefSnap.data();
-      //   setUserName(user.fName);
-      // }
-
-      // querying the todo list
       const todoCol = query(
         collection(db, "to do: " + authentication.currentUser.uid)
       );
@@ -192,6 +178,7 @@ const HomeScreen = ({ navigation }) => {
                       />
                     </TouchableOpacity>
                   </View>
+                  {/* bee image */}
                   <TouchableOpacity onPress={() => refreshPage()}>
                     <Image
                       source={require("../assets/images/bee/beeside.png")}
@@ -299,7 +286,8 @@ const styles = StyleSheet.create({
     height: 140,
     width: 140,
     marginTop: 5,
-    left: 60,
+    right: 10,
+    position: "absolute",
   },
 });
 

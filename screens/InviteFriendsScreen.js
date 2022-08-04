@@ -111,26 +111,11 @@ const InviteFriendsScreen = ({ navigation }) => {
             friend = { ...doc.data(), id: doc.id };
           }
         });
-        // check if friend is alr friends w user
-        const docRef = doc(
-          db,
-          "friends: " + authentication.currentUser.uid,
-          friend.id
-        );
-        console.log("hi");
-
-        const docSnap = await getDoc(docRef);
-        console.log("hi");
-        if (docSnap.exists()) {
-          newFriend = false;
-        } else {
-          newFriend = true;
-        }
       } else {
         isSame = true;
       }
 
-      if (exists && newFriend) {
+      if (exists) {
         setFriend(friend);
         // enter friend email in user's friends collection
 
@@ -138,8 +123,6 @@ const InviteFriendsScreen = ({ navigation }) => {
         Alert.alert("Success", "Started a chat with " + friend.fName);
 
         navigation.goBack();
-      } else if (!newFriend) {
-        Alert.alert("You are already friends with " + friend.fName + " !");
       } else if (isSame) {
         Alert.alert("Invalid Email", "You cannot enter your own email");
       } else if (!isSame) {
